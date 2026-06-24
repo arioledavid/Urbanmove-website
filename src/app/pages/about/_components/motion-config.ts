@@ -1,0 +1,12 @@
+export {
+  CLIP_REVEAL,
+  FADE_UP,
+  FADE_UP_SUBTLE,
+  PREMIUM_EASE,
+  PREMIUM_TRANSITION,
+  QUICK_TRANSITION,
+  SCALE_IN,
+  SLIDE_IN_RIGHT,
+  STAGGER_CONTAINER,
+  STAGGER_GRID,
+} from "@/components/motion/motion-config";
