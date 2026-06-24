@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { LogoLink } from "@/components/brand/brand-logo";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   DesktopNav,
   MobileServiceLink,
@@ -108,27 +109,45 @@ export function Navbar() {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const solidNav = !onHome || scrolled;
 
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!onHome) {
+      setScrolled(false);
+      return;
+    }
+
+    const onScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [onHome]);
+
   return (
     <header
-      className={
+      className={cn(
         onHome
-          ? "pointer-events-none fixed top-0 left-0 z-50 w-full"
-          : "sticky top-0 z-50 w-full border-b border-border bg-paper"
-      }
+          ? "pointer-events-none fixed top-0 left-0 z-50 w-full transition-[background-color,border-color] duration-300"
+          : "sticky top-0 z-50 w-full border-b border-border bg-paper",
+        solidNav && "border-b border-border bg-paper",
+      )}
     >
       <div className="pointer-events-auto mx-auto grid w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-4 sm:px-5 lg:px-6">
         <LogoLink
-          variant={onHome ? "light" : "dark"}
+          variant={solidNav ? "dark" : "light"}
           className="h-16 w-auto justify-self-start sm:h-20 lg:h-22"
         />
 
         <div className="justify-self-center">
-          <DesktopNav light={onHome} />
+          <DesktopNav light={!solidNav} />
         </div>
 
         <div className="flex items-center justify-self-end gap-3">
