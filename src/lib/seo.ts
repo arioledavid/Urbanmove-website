@@ -86,12 +86,24 @@ export const DEFAULT_KEYWORDS = [
   "Urban Move Logistics",
 ];
 
+/** Formats E.164 UK numbers for display, e.g. +447776446254 → +44 07776 446254 */
+export function formatTelephoneDisplay(telephone: string): string {
+  const digits = telephone.replace(/\D/g, "");
+
+  if (digits.startsWith("44") && digits.length === 12) {
+    const local = `0${digits.slice(2)}`;
+    return `+44 ${local.slice(0, 5)} ${local.slice(5)}`;
+  }
+
+  return telephone;
+}
+
 /** Business details used in JSON-LD and site metadata. */
 export const BUSINESS = {
   name: SITE_NAME,
   url: SITE_URL,
   telephone: "+447776446254",
-  telephoneDisplay: "07776 446254",
+  telephoneDisplay: formatTelephoneDisplay("+447776446254"),
   whatsapp: "https://wa.me/447776446254",
   email: "info@urbanmovelogistics.co.uk",
   address: {

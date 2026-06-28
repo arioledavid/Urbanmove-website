@@ -38,7 +38,7 @@ export default function LegalNoticePage() {
             href={`tel:${BUSINESS.telephone}`}
             className="font-medium text-ink underline-offset-4 hover:underline"
           >
-            {BUSINESS.telephone}
+            {BUSINESS.telephoneDisplay}
           </a>
         </p>
       </section>

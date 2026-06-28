@@ -7,7 +7,7 @@ import {
 import { LogoLink } from "@/components/brand/brand-logo";
 import { NAV_LINKS, SERVICE_LINKS } from "@/components/layout/nav-config";
 import { FOOTER_LEGAL_LINKS, SOCIAL_LINKS } from "@/lib/legal";
-import { BUSINESS } from "@/lib/seo";
+import { BUSINESS, formatTelephoneDisplay } from "@/lib/seo";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -112,7 +112,7 @@ export function Footer() {
                   href={`tel:${BUSINESS.telephone}`}
                   className="transition-colors duration-200 hover:text-ink"
                 >
-                  {BUSINESS.telephoneDisplay}
+                  {formatTelephoneDisplay(BUSINESS.telephone)}
                 </a>
               </li>
               <li>
