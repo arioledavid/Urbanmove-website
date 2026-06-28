@@ -47,5 +47,6 @@ skills-lock.json
 
 # markdown
 *.md
+!docs/seo-audit.md
 
 .impeccable/

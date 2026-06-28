@@ -56,7 +56,7 @@ export default function ServicesIndexPage() {
                     {service.title}
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted text-pretty">
-                    {service.subtitle}
+                    {service.navDescription}
                   </p>
                   <p className="mt-4 text-sm font-medium text-primary">
                     Learn more

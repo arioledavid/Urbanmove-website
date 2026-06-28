@@ -48,10 +48,10 @@ export function ContactHeroSection() {
 
           <PageRevealItem>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
-              Tell us what you need — house and office removals, same-day
-              courier, furniture delivery and assembly, household waste
-              clearance, student moves or cargo freight — and we will come back
-              with a clear, no-obligation quote.
+              Tell us what you need moved in Aberdeen — house and office
+              removals, same-day courier, furniture delivery and assembly,
+              household waste clearance, student moves or cargo freight — and
+              we will come back with a clear, no-obligation quote.
             </p>
           </PageRevealItem>
 

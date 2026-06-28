@@ -15,7 +15,7 @@ const ABOUT_HERO_IMAGE_ALT =
 const HEADLINE = "About Urban Move";
 
 const SUBHEADLINE =
-  "Aberdeen's local team for removals, courier runs and waste clearance — insured, reliable, and built around your schedule.";
+  "Aberdeen's local team for removals, courier runs and waste clearance — insured, reliable, and scheduled around you.";
 
 export function AboutHeroSection() {
   const reduceMotion = useReducedMotion();
@@ -62,10 +62,11 @@ export function AboutHeroSection() {
 
           <AboutRevealItem>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:mt-6 sm:text-lg text-pretty">
-              Based in Aberdeen, we handle house and office removals, same-day
-              courier, furniture delivery, waste clearance, student moves and
-              cargo freight — locally and across the UK. Every job is fully
-              insured, clearly priced, and managed by people who know the area.
+              From our base on Menzies Road, we handle house and office
+              removals, same-day courier, furniture delivery, waste clearance,
+              student moves and cargo freight across Aberdeen and beyond. Every
+              job is fully insured, clearly priced, and run by people who know
+              the city.
             </p>
           </AboutRevealItem>
           <AboutRevealItem>

@@ -3,7 +3,7 @@ import { buildSocialMetadata } from "@/lib/seo";
 
 const CONTACT_TITLE = "Contact Us | Get a Quote | Urban Move Logistics";
 const CONTACT_DESCRIPTION =
-  "Request a free quote for removals, same-day courier or waste clearance in Aberdeen. Call or message Urban Move Logistics today.";
+  "Free quote for removals, courier, furniture delivery or waste clearance in Aberdeen. Call or message our local team today.";
 
 export const metadata = buildSocialMetadata({
   title: CONTACT_TITLE,

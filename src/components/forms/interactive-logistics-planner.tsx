@@ -601,15 +601,43 @@ export function InteractiveLogisticsPlanner({
       return;
     }
 
+    if (!form.service) {
+      return;
+    }
+
     setErrors({});
     setStatusMessage("");
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      const response = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setStatusMessage("Your quote request was sent successfully.");
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        throw new Error(
+          payload?.error ??
+            "We couldn't send your quote request. Please try again.",
+        );
+      }
+
+      setSubmitted(true);
+      setStatusMessage("Your quote request was sent successfully.");
+    } catch (error) {
+      setStatusMessage(
+        error instanceof Error
+          ? error.message
+          : "We couldn't send your quote request. Please try again.",
+      );
+      statusRef.current?.focus();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (submitted) {
