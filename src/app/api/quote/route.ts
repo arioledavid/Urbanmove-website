@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     `${BUSINESS.name} <onboarding@resend.dev>`;
   const to = process.env.RESEND_TO_EMAIL ?? BUSINESS.email;
 
-  const { subject, text } = buildQuoteRequestEmail(validation.data);
+  const { subject, text, html } = buildQuoteRequestEmail(validation.data);
 
   try {
     const resend = getResendClient();
@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       replyTo: validation.data.email,
       subject,
       text,
+      html,
     });
 
     if (error) {

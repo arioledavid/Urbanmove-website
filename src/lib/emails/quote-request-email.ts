@@ -1,7 +1,17 @@
+import { EMAIL_BRAND } from "@/lib/emails/brand-tokens";
 import {
   QUOTE_SERVICE_LABELS,
   type QuoteRequestPayload,
 } from "@/lib/quote-request";
+import { BUSINESS, SITE_NAME, SITE_URL } from "@/lib/seo";
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
 
 function formatValue(value: string | boolean): string {
   if (typeof value === "boolean") {
@@ -56,6 +66,91 @@ function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, strin
   }
 }
 
+function buildDetailRowsHtml(rows: Array<[string, string]>): string {
+  return rows
+    .map(
+      ([label, value], index) => `
+        <tr>
+          <td style="padding:14px 16px;border-top:1px solid ${EMAIL_BRAND.border};font-size:13px;font-weight:600;color:${EMAIL_BRAND.muted};width:38%;vertical-align:top;background:${index % 2 === 0 ? EMAIL_BRAND.paper : EMAIL_BRAND.surface};">
+            ${escapeHtml(label)}
+          </td>
+          <td style="padding:14px 16px;border-top:1px solid ${EMAIL_BRAND.border};font-size:14px;line-height:1.5;color:${EMAIL_BRAND.ink};vertical-align:top;background:${index % 2 === 0 ? EMAIL_BRAND.paper : EMAIL_BRAND.surface};">
+            ${escapeHtml(value)}
+          </td>
+        </tr>`,
+    )
+    .join("");
+}
+
+function buildQuoteRequestEmailHtml(payload: QuoteRequestPayload): string {
+  const serviceLabel = QUOTE_SERVICE_LABELS[payload.service];
+  const contactRows: Array<[string, string]> = [
+    ["Name", formatValue(payload.name)],
+    ["Email", formatValue(payload.email)],
+    ["Contact number", formatValue(payload.contactNumber)],
+    ["Service", serviceLabel],
+  ];
+  const allRows = [...contactRows, ...buildServiceDetails(payload)];
+
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>New quote request</title>
+  </head>
+  <body style="margin:0;padding:0;background:${EMAIL_BRAND.surface};font-family:${EMAIL_BRAND.fontStack};color:${EMAIL_BRAND.ink};">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${EMAIL_BRAND.surface};padding:32px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:600px;background:${EMAIL_BRAND.paper};border:1px solid ${EMAIL_BRAND.border};border-radius:${EMAIL_BRAND.radiusLg};overflow:hidden;">
+            <tr>
+              <td style="height:4px;background:${EMAIL_BRAND.primary};font-size:0;line-height:0;">&nbsp;</td>
+            </tr>
+            <tr>
+              <td style="padding:32px 32px 24px;">
+                <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:${EMAIL_BRAND.primary};">
+                  New enquiry
+                </p>
+                <h1 style="margin:0 0 12px;font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-0.02em;color:${EMAIL_BRAND.ink};">
+                  Quote request from ${escapeHtml(payload.name)}
+                </h1>
+                <p style="margin:0;font-size:15px;line-height:1.6;color:${EMAIL_BRAND.muted};">
+                  A new enquiry was submitted via the website contact form. Reply directly to this email to respond to the customer.
+                </p>
+                <p style="margin:20px 0 0;display:inline-block;padding:8px 14px;border-radius:${EMAIL_BRAND.radiusFull};background:${EMAIL_BRAND.primarySoft};border:1px solid rgba(240,58,47,0.15);font-size:13px;font-weight:600;color:${EMAIL_BRAND.ink};">
+                  ${escapeHtml(serviceLabel)}
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0 32px 32px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid ${EMAIL_BRAND.border};border-radius:${EMAIL_BRAND.radiusMd};overflow:hidden;">
+                  ${buildDetailRowsHtml(allRows)}
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:24px 32px 32px;border-top:1px solid ${EMAIL_BRAND.border};background:${EMAIL_BRAND.surface};">
+                <p style="margin:0 0 6px;font-size:14px;font-weight:600;color:${EMAIL_BRAND.ink};">
+                  ${escapeHtml(SITE_NAME)}
+                </p>
+                <p style="margin:0 0 4px;font-size:13px;line-height:1.5;color:${EMAIL_BRAND.muted};">
+                  ${escapeHtml(BUSINESS.telephoneDisplay)} · ${escapeHtml(BUSINESS.email)}
+                </p>
+                <p style="margin:0;font-size:12px;line-height:1.5;color:${EMAIL_BRAND.subtle};">
+                  <a href="${SITE_URL}" style="color:${EMAIL_BRAND.primary};text-decoration:none;">${SITE_URL.replace("https://", "")}</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>`;
+}
+
 export function buildQuoteRequestEmail(payload: QuoteRequestPayload) {
   const serviceLabel = QUOTE_SERVICE_LABELS[payload.service];
   const subject = `New quote request — ${serviceLabel} — ${payload.name}`;
@@ -74,7 +169,13 @@ export function buildQuoteRequestEmail(payload: QuoteRequestPayload) {
     "A new enquiry was submitted via the website contact form.",
     "",
     ...allRows.map(([label, value]) => `${label}: ${value}`),
+    "",
+    `${SITE_NAME}`,
+    `${BUSINESS.telephoneDisplay} · ${BUSINESS.email}`,
+    SITE_URL,
   ].join("\n");
 
-  return { subject, text };
+  const html = buildQuoteRequestEmailHtml(payload);
+
+  return { subject, text, html };
 }
