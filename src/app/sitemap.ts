@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SERVICE_SLUGS } from "@/lib/services-data";
+import { NAV_SERVICE_ORDER } from "@/lib/services-data";
 import { SITE_URL } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : path === "/services" ? 0.9 : 0.8,
   }));
 
-  const serviceEntries: MetadataRoute.Sitemap = SERVICE_SLUGS.map((slug) => ({
+  const serviceEntries: MetadataRoute.Sitemap = NAV_SERVICE_ORDER.map((slug) => ({
     url: `${SITE_URL}/services/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly",

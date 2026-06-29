@@ -49,7 +49,7 @@ export function HeroContent() {
 
   return (
     <motion.div
-      className="w-full min-w-0 max-w-2xl"
+      className="w-full min-w-0 max-w-3xl"
       variants={containerVariants}
       {...motionProps}
     >
@@ -82,7 +82,7 @@ export function HeroContent() {
           Get an Instant Quote
         </Link>
         <Link
-          href="#services"
+          href="/services"
           className="inline-flex h-12 items-center justify-center rounded-full border border-paper bg-transparent px-6 text-sm font-medium text-paper transition-colors hover:bg-paper/10"
         >
           View Services

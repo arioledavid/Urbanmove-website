@@ -1,7 +1,7 @@
 import { HeroContent } from "./hero-content";
 import { HeroMedia } from "./hero-media";
 
-const HERO_VIDEO = "/hero/hero-logistics.mp4";
+const HERO_VIDEO = "/hero/live-hero.mp4";
 
 export function HeroSection() {
   return (

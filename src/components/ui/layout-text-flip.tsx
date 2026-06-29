@@ -66,7 +66,7 @@ export function LayoutTextFlip({
       <motion.span
         layout
         className={cn(
-          "relative w-fit overflow-hidden rounded-md border border-transparent bg-paper px-3 py-1.5 font-sans text-lg font-semibold tracking-tight text-ink shadow-sm ring shadow-black/10 ring-black/10 md:px-4 md:py-2 md:text-xl lg:text-2xl",
+          "relative w-fit overflow-hidden rounded-md border border-transparent bg-paper px-3 py-1.5 font-sans text-lg font-semibold tracking-tight whitespace-nowrap text-ink shadow-sm ring shadow-black/10 ring-black/10 md:px-4 md:py-2 md:text-xl lg:text-2xl",
           pillClassName,
         )}
       >

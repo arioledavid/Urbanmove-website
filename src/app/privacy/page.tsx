@@ -3,7 +3,7 @@ import { BUSINESS, buildSocialMetadata } from "@/lib/seo";
 
 const PRIVACY_TITLE = "Privacy Policy";
 const PRIVACY_DESCRIPTION =
-  "How Urban Move Logistics collects, uses and protects your personal data under UK data protection law.";
+  "How Urbanmove Logistics Ltd collects, uses and protects your personal data under UK data protection law.";
 
 export const metadata = buildSocialMetadata({
   title: PRIVACY_TITLE,
