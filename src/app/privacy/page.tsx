@@ -3,7 +3,7 @@ import { BUSINESS, buildSocialMetadata } from "@/lib/seo";
 
 const PRIVACY_TITLE = "Privacy Policy";
 const PRIVACY_DESCRIPTION =
-  "How Urban Move Logistics collects, uses and protects your personal data under UK data protection law.";
+  "How Urbanmove Logistics Ltd collects, uses and protects your personal data under UK data protection law.";
 
 export const metadata = buildSocialMetadata({
   title: PRIVACY_TITLE,
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Collected personal data</h2>
         <p>
-          Urban Move Logistics collects personal data such as names, contact
+          Urbanmove Logistics Ltd collects personal data such as names, contact
           details and enquiry information submitted through our website. We do
           not sell personal data and only share it securely where necessary to
           deliver our services or meet legal requirements.

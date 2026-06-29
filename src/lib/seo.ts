@@ -6,6 +6,8 @@ export const SITE_URL = "https://www.urbanmovelogistics.co.uk";
 export const SITE_NAME = "Urban Move Logistics";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 export const DEFAULT_OG_IMAGE_ALT = SITE_NAME;
+export const STANDARD_OG_WIDTH = 1200;
+export const STANDARD_OG_HEIGHT = 630;
 
 export const defaultOpenGraphImages = [
   {
@@ -22,15 +24,30 @@ type SocialMetadataOptions = {
   canonical?: string;
   absoluteTitle?: boolean;
   image?: string;
+  imageAlt?: string;
   robots?: Metadata["robots"];
 };
 
-function resolveOpenGraphImages(image: string = DEFAULT_OG_IMAGE) {
+function resolveOpenGraphImages(
+  image: string = DEFAULT_OG_IMAGE,
+  alt: string = DEFAULT_OG_IMAGE_ALT,
+) {
   if (image === DEFAULT_OG_IMAGE) {
     return [...defaultOpenGraphImages];
   }
 
-  return [{ url: image, alt: DEFAULT_OG_IMAGE_ALT }];
+  if (image.startsWith("/og/")) {
+    return [
+      {
+        url: image,
+        width: STANDARD_OG_WIDTH,
+        height: STANDARD_OG_HEIGHT,
+        alt,
+      },
+    ];
+  }
+
+  return [{ url: image, alt }];
 }
 
 export function buildSocialMetadata({
@@ -39,10 +56,11 @@ export function buildSocialMetadata({
   canonical,
   absoluteTitle = false,
   image = DEFAULT_OG_IMAGE,
+  imageAlt = DEFAULT_OG_IMAGE_ALT,
   robots,
 }: SocialMetadataOptions): Metadata {
   const ogTitle = absoluteTitle ? title : `${title} | ${SITE_NAME}`;
-  const images = resolveOpenGraphImages(image);
+  const images = resolveOpenGraphImages(image, imageAlt);
 
   return {
     title: absoluteTitle ? { absolute: title } : title,
@@ -67,11 +85,15 @@ export function buildServiceMetadata(
   slug: ServiceSlug,
   service: ServiceData,
 ): Metadata {
+  const image =
+    "ogImage" in service && service.ogImage ? service.ogImage : service.image;
+
   return buildSocialMetadata({
     title: service.title,
     description: getServiceHeroDescription(service),
     canonical: `/services/${slug}`,
-    image: service.image,
+    image,
+    imageAlt: service.imageAlt,
   });
 }
 

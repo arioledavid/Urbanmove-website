@@ -39,6 +39,7 @@ export const SERVICES_DATA = {
     navDescription:
       "Local and long-distance moves from £89 per hour with loading and unloading included.",
     image: "/manandvan.png",
+    ogImage: "/og/manandvan.jpg",
     imageAlt:
       "Urban Move Logistics man and van team loading furniture for a local move in Aberdeen",
     heroDescription:
@@ -102,6 +103,7 @@ export const SERVICES_DATA = {
     navDescription:
       "Short- and long-term storage for furniture and belongings via trusted partner facilities.",
     image: "/storage-service.png",
+    ogImage: "/og/storage-service.jpg",
     imageAlt:
       "Urban Move Logistics team preparing furniture and belongings for secure storage in Aberdeen",
     heroDescription:

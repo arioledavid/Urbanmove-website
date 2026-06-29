@@ -78,8 +78,8 @@ JSON-LD `sameAs` includes Google Business Profile, Instagram, and TikTok URLs.
 | `/contact` | `/og-image.png` |
 | `/services` | `/og-image.png` |
 | `/services/house-office-removals` | `/removal.jpg` |
-| `/services/man-and-van` | `/manandvan.png` |
-| `/services/storage-solutions` | `/storage-service.png` |
+| `/services/man-and-van` | `/og/manandvan.jpg` (1200×630, 235 KB) |
+| `/services/storage-solutions` | `/og/storage-service.jpg` (1200×630, 209 KB) |
 | `/services/furniture-delivery-assembly` | `/furniture-delivery.png` |
 | `/services/household-waste-clearance` | `/household-waste.jpg` |
 | `/services/student-moves` | `/student-moves.png` |
@@ -128,3 +128,4 @@ Path redirects are live in `next.config.ts`:
 - 2026-06-28: Technical implementation complete — OG images, local copy, /services hub, footer links, Twitter card overrides confirmed
 - 2026-06-28: GTM added via `@next/third-parties`; NAP phone display standardised to `+44` format; SEO docs expanded with analytics, env vars, and migration tables
 - 2026-06-29: Added Man & Van and Storage Solutions service pages; sitemap expanded to 14 routes; `getServiceHeroDescription()` for richer service metadata; hub and home features copy updated; sitemap uses `NAV_SERVICE_ORDER`
+- 2026-06-29: Optimized Man & Van and Storage OG images — dedicated `/og/*.jpg` assets at 1200×630 (cropped from 1536×1024 sources); page images unchanged
