@@ -15,21 +15,21 @@ type Feature = {
 
 const FEATURES: Feature[] = [
   {
-    title: "UK Wide Infrastructure",
-    body: "Seamless logistics coverage engineered for both high growth businesses and individual clients. Wherever you are, we bridge the gap between local precision and national reach.",
+    title: "Complete Moving & Logistics Solutions for Homes and Businesses",
+    body: "From house and office removals to man-and-van services, furniture assembly, student relocations, storage solutions, skip clearances, cargo partnerships, and reliable last-mile delivery, Urban Move Logistics delivers seamless, professional services with local expertise and nationwide reach.",
     containerClassName: "bg-ink",
     bodyClassName: "max-w-2xl",
     span: "lg:col-span-2",
   },
   {
-    title: "Time Critical Dispatch",
-    body: "Fast, secure, and meticulously scheduled. We track every mile to guarantee your cargo arrives exactly when expected.",
+    title: "Precision-Driven Moving & Logistics Solutions",
+    body: "Secure, well-timed, and professionally managed services spanning removals, storage, furniture assembly, and delivery. We handle every detail to keep your move on track.",
     containerClassName: "bg-primary",
     span: "lg:col-span-1",
   },
   {
-    title: "Stress Free Handling",
-    body: "From heavy cargo clearance to fragile residential removals, our team treats your assets with absolute care. Completely insured, thoroughly professional.",
+    title: "Professional Handling You Can Trust",
+    body: "From fragile household items to heavy cargo and full property clearances, we provide careful, fully insured handling across removals, storage coordination, and logistics services.",
     containerClassName: "bg-tertiary",
     span: "lg:col-span-1",
     theme: "light",
@@ -48,14 +48,16 @@ export function FeaturesSection() {
           Why Urban Move
         </h2>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-6">
           {FEATURES.map((feature, index) => (
             <ScrollReveal
               key={feature.title}
               delay={index * 0.08}
-              className={feature.span}
+              className={cn(feature.span, "h-full")}
             >
-              <WobbleCard containerClassName={feature.containerClassName}>
+              <WobbleCard
+                containerClassName={cn(feature.containerClassName, "h-full")}
+              >
                 <h3
                   className={cn(
                     "text-xl font-semibold tracking-tight sm:text-2xl",

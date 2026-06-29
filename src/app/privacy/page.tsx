@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Collected personal data</h2>
         <p>
-          Urbanmove Logistics Ltd collects personal data such as names, contact
+          Urban Move Logistics collects personal data such as names, contact
           details and enquiry information submitted through our website. We do
           not sell personal data and only share it securely where necessary to
           deliver our services or meet legal requirements.

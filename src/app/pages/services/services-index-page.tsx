@@ -20,9 +20,9 @@ export default function ServicesIndexPage() {
             Logistics built around you
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
-            Removals, courier, furniture delivery, waste clearance, student moves
-            and cargo freight in Aberdeen and across the UK. Choose a service to
-            learn more or get a quote.
+            Removals, man and van, storage, furniture delivery, waste clearance,
+            student moves, cargo freight and same-day courier in Aberdeen and
+            across the UK. Choose a service to learn more or get a quote.
           </p>
         </div>
       </section>

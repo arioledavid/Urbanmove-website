@@ -14,8 +14,8 @@ const ABOUT_HERO_IMAGE_ALT =
 
 const HEADLINE = "About Urban Move";
 
-const SUBHEADLINE =
-  "Aberdeen's local team for removals, courier runs and waste clearance — insured, reliable, and scheduled around you.";
+const INTRO =
+  "Urban Move is Aberdeen's trusted man and van and removal company, providing affordable, reliable, and professional moving services across Aberdeen and throughout the UK. We specialise in house removals, office relocations, house clearance, skip hire, furniture collection and delivery, packing services, furniture assembly and dismantling, courier and logistics, local parcel delivery, student moves, and same-day transport solutions. Whether you need a single item moved or a full house relocation, our experienced team and fleet of vans deliver a fast, safe, and stress-free service at competitive prices.";
 
 export function AboutHeroSection() {
   const reduceMotion = useReducedMotion();
@@ -55,18 +55,8 @@ export function AboutHeroSection() {
           </AboutRevealItem>
 
           <AboutRevealItem>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-ink/90 sm:mt-6 sm:text-xl text-pretty">
-              {SUBHEADLINE}
-            </p>
-          </AboutRevealItem>
-
-          <AboutRevealItem>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:mt-6 sm:text-lg text-pretty">
-              From our base on Menzies Road, we handle house and office
-              removals, same-day courier, furniture delivery, waste clearance,
-              student moves and cargo freight across Aberdeen and beyond. Every
-              job is fully insured, clearly priced, and run by people who know
-              the city.
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-ink/90 sm:mt-6 sm:text-lg text-pretty">
+              {INTRO}
             </p>
           </AboutRevealItem>
           <AboutRevealItem>

@@ -33,38 +33,116 @@ export const SERVICES_DATA = {
       "Flexible scheduling to prevent business downtime",
     ],
   },
-  "same-day-courier": {
-    title: "Same Day Courier",
-    subtitle: "When timing is everything. Direct and instantaneous.",
-    navDescription: "Rapid pickup and direct delivery across the UK.",
-    image: "/same-day-courier.png",
+  "man-and-van": {
+    title: "Man & Van Services",
+    subtitle: "Fast, reliable and affordable moving solutions.",
+    navDescription:
+      "Local and long-distance moves from £89 per hour with loading and unloading included.",
+    image: "/manandvan.png",
     imageAlt:
-      "Urban Move Logistics courier handing a same-day parcel delivery to a customer in Aberdeen",
+      "Urban Move Logistics man and van team loading furniture for a local move in Aberdeen",
     heroDescription:
-      "High-priority courier service designed for rapid dispatch and zero-delay transit across the UK. Absolute transparency from secure pickup to electronic proof of delivery.",
+      "Whether you're moving a single item, relocating to a new home, or need furniture collected and delivered, our professional Man & Van service makes moving simple and stress-free.",
+    heroHighlight: "From just £89 per hour",
+    heroDescriptionContinued:
+      "Our experienced team handles your belongings with care, ensuring they arrive safely and on time. We provide local and long-distance transport for homes, businesses, and individual items.",
     steps: [
       {
-        title: "Instant dispatch",
+        title: "Request a quote",
         description:
-          "Vehicle assigned and en route within minutes of confirmation.",
+          "Contact us with your collection and delivery details, including the items to be moved and your preferred date.",
       },
       {
-        title: "Direct transit",
+        title: "Book your move",
         description:
-          "Point-to-point delivery with live tracking and no hub stops.",
+          "We'll confirm your booking, provide a clear price, and arrange a convenient time.",
       },
       {
-        title: "Proof of delivery",
+        title: "We do the heavy lifting",
         description:
-          "Electronic confirmation sent the moment your parcel arrives.",
+          "Our driver arrives with a fully equipped van and helps with loading, transporting, and unloading your belongings.",
+      },
+      {
+        title: "Safe delivery",
+        description:
+          "Your items are delivered safely to their destination with care and professionalism.",
       },
     ],
+    featuresEyebrow: "What's included",
+    featuresTitle: "Our Man & Van Service Includes",
     features: [
-      "Instant vehicle dispatch upon confirmation",
-      "Direct point-to-point delivery with zero hub stops",
-      "Real-time tracking and instant arrival notifications",
-      "Vetted, priority transport handling",
+      "Home and flat moves",
+      "Single item collections and deliveries",
+      "Furniture transport",
+      "Student moves",
+      "Office and business relocations",
+      "Facebook Marketplace, Gumtree & IKEA collections",
+      "Local and long-distance moves",
+      "Loading and unloading assistance",
     ],
+    whyChooseUsEyebrow: "Why us",
+    whyChooseUsTitle: "Why Choose Us?",
+    whyChooseUs: [
+      "From £89 per hour",
+      "Friendly, professional drivers",
+      "Fully insured service",
+      "Reliable and punctual",
+      "Flexible booking times",
+      "No hidden charges",
+      "Free, no-obligation quotes",
+    ],
+    ctaTitle: "Need Something Moved?",
+    ctaDescription:
+      "Contact us today for a free quote and let us take the stress out of your move.",
+    ctaButtonLabel: "Get a Free Quote",
+  },
+  "storage-solutions": {
+    title: "Storage Solutions",
+    subtitle: "Flexible, secure storage when you need it.",
+    navDescription:
+      "Short- and long-term storage for furniture and belongings via trusted partner facilities.",
+    image: "/storage-service.png",
+    imageAlt:
+      "Urban Move Logistics team preparing furniture and belongings for secure storage in Aberdeen",
+    heroDescription:
+      "Whether you're moving home, relocating your business, renovating, downsizing, or simply need temporary storage for furniture and personal belongings, Urban Move Logistics provides flexible storage solutions through our trusted storage partners.",
+    heroDescriptionContinued:
+      "From a single item to the full contents of a property, we make storing your belongings simple, secure, and stress-free.",
+    steps: [
+      {
+        title: "Tell us your storage needs",
+        description:
+          "Let us know what you need to store, how long you'll need storage for, and your preferred collection date.",
+      },
+      {
+        title: "We collect your belongings",
+        description:
+          "Our team carefully packs (if required), loads, and transports your furniture and items directly to one of our trusted storage partner facilities.",
+      },
+      {
+        title: "Secure & insured storage",
+        description:
+          "Your belongings are stored in clean, secure, and professionally managed facilities. All items are covered by insurance for added peace of mind throughout the storage period.",
+      },
+      {
+        title: "Delivery when you're ready",
+        description:
+          "When you're ready, simply contact us. We'll arrange collection from storage and deliver your items safely to your new home, office, or chosen location.",
+      },
+    ],
+    featuresEyebrow: "Use cases",
+    featuresTitle: "Perfect For",
+    features: [
+      "Temporary furniture storage during house moves",
+      "Delayed completion or move-in dates",
+      "Home renovations and refurbishments",
+      "Office relocations",
+      "Student storage between terms",
+      "Downsizing or decluttering",
+      "Business equipment and inventory storage",
+    ],
+    featuresDescription:
+      "We manage the entire process from collection and transport to storage coordination and final delivery, ensuring your belongings remain safe, secure, and fully insured at every stage.",
   },
   "furniture-delivery-assembly": {
     title: "Furniture Delivery & Assembly",
@@ -199,6 +277,39 @@ export const SERVICES_DATA = {
       "Transparent multi-point digital documentation tracking",
     ],
   },
+  "same-day-courier": {
+    title: "Same Day Courier",
+    subtitle: "When timing is everything. Direct and instantaneous.",
+    navDescription: "Rapid pickup and direct delivery across the UK.",
+    image: "/same-day-courier.png",
+    imageAlt:
+      "Urban Move Logistics courier handing a same-day parcel delivery to a customer in Aberdeen",
+    heroDescription:
+      "High-priority courier service designed for rapid dispatch and zero-delay transit across the UK. Absolute transparency from secure pickup to electronic proof of delivery.",
+    steps: [
+      {
+        title: "Instant dispatch",
+        description:
+          "Vehicle assigned and en route within minutes of confirmation.",
+      },
+      {
+        title: "Direct transit",
+        description:
+          "Point-to-point delivery with live tracking and no hub stops.",
+      },
+      {
+        title: "Proof of delivery",
+        description:
+          "Electronic confirmation sent the moment your parcel arrives.",
+      },
+    ],
+    features: [
+      "Instant vehicle dispatch upon confirmation",
+      "Direct point-to-point delivery with zero hub stops",
+      "Real-time tracking and instant arrival notifications",
+      "Vetted, priority transport handling",
+    ],
+  },
 } as const;
 
 export type ServiceSlug = keyof typeof SERVICES_DATA;
@@ -218,14 +329,30 @@ export function isServiceSlug(slug: string): slug is ServiceSlug {
   return slug in SERVICES_DATA;
 }
 
+export function getServiceHeroDescription(service: ServiceData): string {
+  let text = service.heroDescription;
+
+  if ("heroHighlight" in service && service.heroHighlight) {
+    text += ` ${service.heroHighlight}`;
+  }
+
+  if ("heroDescriptionContinued" in service && service.heroDescriptionContinued) {
+    text += ` ${service.heroDescriptionContinued}`;
+  }
+
+  return text;
+}
+
 /** Maps service page slugs to the interactive planner's service identifiers. */
 export const SERVICE_SLUG_TO_PLANNER = {
   "house-office-removals": "removal",
-  "same-day-courier": "courier",
+  "man-and-van": "removal",
+  "storage-solutions": "removal",
   "furniture-delivery-assembly": "removal",
   "household-waste-clearance": "removal",
   "student-moves": "removal",
   cargo: "cargo",
+  "same-day-courier": "courier",
 } as const satisfies Record<ServiceSlug, "cargo" | "removal" | "courier">;
 
 export function getPlannerServiceFromSlug(
@@ -239,24 +366,28 @@ export function getServiceBookingHref(slug: ServiceSlug): string {
   return `/contact?service=${slug}#quote`;
 }
 
-/** Display order for home sticky-scroll and hero flip (courier first). */
+/** Display order for home sticky-scroll and hero flip. */
 export const HOME_SERVICE_ORDER: ServiceSlug[] = [
-  "same-day-courier",
   "house-office-removals",
+  "man-and-van",
+  "storage-solutions",
   "furniture-delivery-assembly",
   "student-moves",
   "household-waste-clearance",
   "cargo",
+  "same-day-courier",
 ];
 
 /** Display order for nav, footer, and services hub. */
 export const NAV_SERVICE_ORDER: ServiceSlug[] = [
   "house-office-removals",
-  "same-day-courier",
+  "man-and-van",
+  "storage-solutions",
   "furniture-delivery-assembly",
   "household-waste-clearance",
   "student-moves",
   "cargo",
+  "same-day-courier",
 ];
 
 export type ServiceLink = {
@@ -286,7 +417,7 @@ export function getHomeStickyScrollContent() {
     return {
       title: service.title,
       tagline: service.subtitle,
-      description: service.heroDescription,
+      description: getServiceHeroDescription(service),
       image: service.image,
       imageAlt: service.imageAlt,
     };

@@ -176,9 +176,22 @@ export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
               </PageRevealItem>
 
               <PageRevealItem>
-                <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
-                  {service.heroDescription}
-                </p>
+                <div className="mt-6 max-w-2xl space-y-4">
+                  <p className="text-base leading-relaxed text-muted sm:text-lg text-pretty">
+                    {service.heroDescription}
+                  </p>
+                  {"heroHighlight" in service && service.heroHighlight ? (
+                    <p className="text-xl font-bold tracking-tight text-primary sm:text-2xl lg:text-3xl text-pretty">
+                      {service.heroHighlight}
+                    </p>
+                  ) : null}
+                  {"heroDescriptionContinued" in service &&
+                  service.heroDescriptionContinued ? (
+                    <p className="text-base leading-relaxed text-muted sm:text-lg text-pretty">
+                      {service.heroDescriptionContinued}
+                    </p>
+                  ) : null}
+                </div>
               </PageRevealItem>
 
               <PageRevealItem>
@@ -245,8 +258,16 @@ export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
       >
         <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
           <SectionHeader
-            eyebrow="Capabilities"
-            title="Precision-built for your requirements"
+            eyebrow={
+              "featuresEyebrow" in service
+                ? service.featuresEyebrow
+                : "Capabilities"
+            }
+            title={
+              "featuresTitle" in service
+                ? service.featuresTitle
+                : "Precision-built for your requirements"
+            }
             titleId="service-capabilities-heading"
             className="mb-10"
           />
@@ -256,8 +277,48 @@ export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
               <FeatureCard key={feature} feature={feature} index={index} />
             ))}
           </PageStagger>
+
+          {"featuresDescription" in service && service.featuresDescription ? (
+            <PageReveal className="mt-10">
+              <PageRevealItem>
+                <p className="max-w-3xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
+                  {service.featuresDescription}
+                </p>
+              </PageRevealItem>
+            </PageReveal>
+          ) : null}
         </div>
       </section>
+
+      {"whyChooseUs" in service && service.whyChooseUs ? (
+        <section
+          className="border-t border-border bg-surface py-16 sm:py-20 lg:py-24"
+          aria-labelledby="service-why-choose-heading"
+        >
+          <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
+            <SectionHeader
+              eyebrow={
+                "whyChooseUsEyebrow" in service
+                  ? service.whyChooseUsEyebrow
+                  : "Why us"
+              }
+              title={
+                "whyChooseUsTitle" in service
+                  ? service.whyChooseUsTitle
+                  : "Why Choose Us?"
+              }
+              titleId="service-why-choose-heading"
+              className="mb-10"
+            />
+
+            <PageStagger className="grid gap-4 md:grid-cols-2 md:gap-5" grid>
+              {service.whyChooseUs.map((item, index) => (
+                <FeatureCard key={item} feature={item} index={index} />
+              ))}
+            </PageStagger>
+          </div>
+        </section>
+      ) : null}
 
       <section
         className="border-t border-border bg-surface py-20 sm:py-24 lg:py-28"
@@ -290,21 +351,26 @@ export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
                     id="service-cta-heading"
                     className="text-[clamp(1.75rem,4vw,2.75rem)] leading-tight font-semibold tracking-tight text-ink text-balance"
                   >
-                    Ready to move forward?
+                    {"ctaTitle" in service
+                      ? service.ctaTitle
+                      : "Ready to move forward?"}
                   </h2>
                 </PageRevealItem>
 
                 <PageRevealItem>
                   <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg text-pretty">
-                    Initialize your booking request and our team will coordinate
-                    every detail around your timeline.
+                    {"ctaDescription" in service
+                      ? service.ctaDescription
+                      : "Initialize your booking request and our team will coordinate every detail around your timeline."}
                   </p>
                 </PageRevealItem>
 
                 <PageRevealItem>
                   <div className="mt-10">
                     <MagneticButton href={bookingHref}>
-                      Initialize Booking Request
+                      {"ctaButtonLabel" in service
+                        ? service.ctaButtonLabel
+                        : "Initialize Booking Request"}
                     </MagneticButton>
                   </div>
                 </PageRevealItem>

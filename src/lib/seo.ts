@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ServiceData, ServiceSlug } from "@/lib/services-data";
+import { getServiceHeroDescription } from "@/lib/services-data";
 
 export const SITE_URL = "https://www.urbanmovelogistics.co.uk";
 export const SITE_NAME = "Urban Move Logistics";
@@ -68,7 +69,7 @@ export function buildServiceMetadata(
 ): Metadata {
   return buildSocialMetadata({
     title: service.title,
-    description: service.heroDescription,
+    description: getServiceHeroDescription(service),
     canonical: `/services/${slug}`,
     image: service.image,
   });
@@ -78,6 +79,9 @@ export const DEFAULT_KEYWORDS = [
   "removals Aberdeen",
   "house removals Aberdeen",
   "office removals Aberdeen",
+  "man and van Aberdeen",
+  "storage Aberdeen",
+  "furniture storage Aberdeen",
   "same day courier Aberdeen",
   "waste clearance Aberdeen",
   "furniture delivery Aberdeen",
@@ -166,7 +170,7 @@ export function getServiceJsonLd(slug: ServiceSlug, service: ServiceData) {
     "@context": "https://schema.org",
     "@type": "Service",
     name: service.title,
-    description: service.heroDescription,
+    description: getServiceHeroDescription(service),
     url: `${SITE_URL}/services/${slug}`,
     image: `${SITE_URL}${service.image}`,
     provider: {
