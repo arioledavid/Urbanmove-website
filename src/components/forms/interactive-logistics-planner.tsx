@@ -12,7 +12,7 @@ const SECTION_TRANSITION = {
 } as const;
 
 const SERVICES = [
-  { id: "cargo", label: "Cargo Services" },
+  // { id: "cargo", label: "Cargo Services" },
   { id: "removal", label: "Removal Services" },
   { id: "courier", label: "Courier Service" },
 ] as const;
@@ -87,7 +87,7 @@ const INITIAL_FORM_STATE: FormState = {
 };
 
 const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
-  cargo: ["origin", "destination", "weight", "cargoDescription"],
+  // cargo: ["origin", "destination", "weight", "cargoDescription"],
   removal: [
     "moveDateTime",
     "movingFromPostcode",
@@ -514,9 +514,11 @@ export function InteractiveLogisticsPlanner({
   const reduceMotion = useReducedMotion();
   const formId = useId();
   const statusRef = useRef<HTMLDivElement>(null);
-  const initialPlannerService = initialServiceSlug
+  const rawInitialService = initialServiceSlug
     ? getPlannerServiceFromSlug(initialServiceSlug)
     : null;
+  const initialPlannerService =
+    rawInitialService === "cargo" ? null : rawInitialService;
   const [form, setForm] = useState<FormState>(() => ({
     ...INITIAL_FORM_STATE,
     service: initialPlannerService,
@@ -571,7 +573,7 @@ export function InteractiveLogisticsPlanner({
 
     if (firstKey === "service") {
       document
-        .getElementById(`${formId}-service-cargo`)
+        .getElementById(`${formId}-service-removal`)
         ?.focus();
       return;
     }
@@ -819,7 +821,7 @@ export function InteractiveLogisticsPlanner({
             transition={SECTION_TRANSITION}
             className="mt-8 border-t border-border pt-8"
           >
-            <ConditionalSection serviceKey="cargo" activeService={form.service}>
+            {/* <ConditionalSection serviceKey="cargo" activeService={form.service}>
               <div className="grid gap-5 sm:grid-cols-2">
                 <Field label="Origin" htmlFor="origin">
                   <input
@@ -871,7 +873,7 @@ export function InteractiveLogisticsPlanner({
                   placeholder="Describe the cargo, dimensions, and any special handling requirements"
                 />
               </Field>
-            </ConditionalSection>
+            </ConditionalSection> */}
 
             <ConditionalSection serviceKey="removal" activeService={form.service}>
               <RemovalFields
