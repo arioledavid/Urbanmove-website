@@ -2,9 +2,9 @@ import { buildSocialMetadata } from "@/lib/seo";
 
 export { default } from "../pages/about/about-page";
 
-const ABOUT_TITLE = "About Us | Urban Move Logistics";
+const ABOUT_TITLE = "About Us | Urbanmove Logistics";
 const ABOUT_DESCRIPTION =
-  "Urban Move is Aberdeen's trusted man and van and removal company — house removals, office relocations, clearance, courier and same-day transport across Aberdeen and the UK.";
+  "Urbanmove is Aberdeen's trusted man and van and removal company — house removals, office relocations, clearance, courier and same-day transport across Aberdeen and the UK.";
 
 export const metadata = buildSocialMetadata({
   title: ABOUT_TITLE,

@@ -67,7 +67,7 @@ export const REVIEWS: GoogleReview[] = [
     name: "Temitope Alade",
     rating: 5,
     comment:
-      "I had a really great experience with the Urban Move Logistics team. They were professional, punctual, and genuinely helpful throughout the entire process. Everything went smoothly, and they made the move feel so much less stressful. I’d happily recommend them to anyone looking for a reliable and friendly moving service. 👌",
+      "I had a really great experience with the Urbanmove Logistics team. They were professional, punctual, and genuinely helpful throughout the entire process. Everything went smoothly, and they made the move feel so much less stressful. I’d happily recommend them to anyone looking for a reliable and friendly moving service. 👌",
     image: "/reviews/temitope_alade.png",
     postedAt: "2026-03-24",
   },
@@ -85,7 +85,7 @@ export const REVIEWS: GoogleReview[] = [
     name: "Ifeoma Olaniyi",
     rating: 5,
     comment:
-      "Excellent service received by the Urban Move team. Loved that they are proactive and very helpful. 10/10 would definitely recommend.",
+      "Excellent service received by the Urbanmove team. Loved that they are proactive and very helpful. 10/10 would definitely recommend.",
     image: "/reviews/ifeoma_olaniyi.png",
     postedAt: "2026-02-24",
   },

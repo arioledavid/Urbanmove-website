@@ -10,12 +10,12 @@ const ABOUT_HERO_IMAGE =
   "/hero/gpt-image-2_minimalist_abstract_logistics_background_sleek_delivery_van_and_stacked_parcels_-0.jpg";
 
 const ABOUT_HERO_IMAGE_ALT =
-  "Urban Move Logistics delivery van and stacked parcels on route in Aberdeen and across the UK";
+  "Urbanmove Logistics delivery van and stacked parcels on route in Aberdeen and across the UK";
 
-const HEADLINE = "About Urban Move";
+const HEADLINE = "About Urbanmove";
 
 const INTRO =
-  "Urban Move is Aberdeen's trusted man and van and removal company, providing affordable, reliable, and professional moving services across Aberdeen and throughout the UK. We specialise in house removals, office relocations, house clearance, skip hire, furniture collection and delivery, packing services, furniture assembly and dismantling, courier and logistics, local parcel delivery, student moves, and same-day transport solutions. Whether you need a single item moved or a full house relocation, our experienced team and fleet of vans deliver a fast, safe, and stress-free service at competitive prices.";
+  "Urbanmove is Aberdeen's trusted man and van and removal company, providing affordable, reliable, and professional moving services across Aberdeen and throughout the UK. We specialise in house removals, office relocations, house clearance, skip hire, furniture collection and delivery, packing services, furniture assembly and dismantling, courier and logistics, local parcel delivery, student moves, and same-day transport solutions. Whether you need a single item moved or a full house relocation, our experienced team and fleet of vans deliver a fast, safe, and stress-free service at competitive prices.";
 
 export function AboutHeroSection() {
   const reduceMotion = useReducedMotion();
