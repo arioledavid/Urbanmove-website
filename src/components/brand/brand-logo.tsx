@@ -13,7 +13,7 @@ export function Logo({
   return (
     <Image
       src={variant === "light" ? "/brand/logo-light.svg" : "/brand/logo.svg"}
-      alt="Urban Move Logistics"
+      alt="Urbanmove Logistics"
       width={120}
       height={110}
       priority
@@ -27,7 +27,7 @@ export function LogoLink({ variant = "dark", className }: LogoProps) {
     <Link
       href="/"
       className="inline-block shrink-0"
-      aria-label="Urban Move Logistics home"
+      aria-label="Urbanmove Logistics home"
     >
       <Logo variant={variant} className={className} />
     </Link>

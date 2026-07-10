@@ -3,7 +3,7 @@ import type { ServiceData, ServiceSlug } from "@/lib/services-data";
 import { getServiceHeroDescription } from "@/lib/services-data";
 
 export const SITE_URL = "https://www.urbanmovelogistics.co.uk";
-export const SITE_NAME = "Urban Move Logistics";
+export const SITE_NAME = "Urbanmove Logistics";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 export const DEFAULT_OG_IMAGE_ALT = SITE_NAME;
 export const STANDARD_OG_WIDTH = 1200;
@@ -109,7 +109,7 @@ export const DEFAULT_KEYWORDS = [
   "furniture delivery Aberdeen",
   "student moves Aberdeen",
   "cargo logistics UK",
-  "Urban Move Logistics",
+  "Urbanmove Logistics",
 ];
 
 /** Formats E.164 UK numbers for display, e.g. +447776446254 → +44 7776 446254 */

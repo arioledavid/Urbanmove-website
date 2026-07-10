@@ -16,7 +16,7 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     title: "Complete Moving & Logistics Solutions for Homes and Businesses",
-    body: "From house and office removals to man-and-van services, furniture assembly, student relocations, storage solutions, skip clearances, cargo partnerships, and reliable last-mile delivery, Urban Move Logistics delivers seamless, professional services with local expertise and nationwide reach.",
+    body: "From house and office removals to man-and-van services, furniture assembly, student relocations, storage solutions, skip clearances, cargo partnerships, and reliable last-mile delivery, Urbanmove Logistics delivers seamless, professional services with local expertise and nationwide reach.",
     containerClassName: "bg-ink",
     bodyClassName: "max-w-2xl",
     span: "lg:col-span-2",
@@ -45,7 +45,7 @@ export function FeaturesSection() {
     >
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
         <h2 id="features-heading" className="sr-only">
-          Why Urban Move
+          Why Urbanmove
         </h2>
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-6">

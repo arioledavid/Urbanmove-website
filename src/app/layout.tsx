@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default:
-      "Urban Move Logistics | Removals, Courier & Waste Clearance in Aberdeen",
-    template: "%s | Urban Move Logistics",
+      "Urbanmove Logistics | Removals, Courier & Waste Clearance in Aberdeen",
+    template: "%s | Urbanmove Logistics",
   },
   description:
     "Professional removals, same-day courier and waste clearance in Aberdeen and across the UK. Trusted local logistics.",
