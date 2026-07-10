@@ -3,6 +3,7 @@
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { ReviewCardStack } from "@/components/ui/review-card-stack";
+import { GoogleReviewsLabel } from "@/components/reviews/google-reviews-label";
 import { REVIEWS } from "@/lib/reviews-data";
 
 export function ReviewsSection() {
@@ -14,14 +15,12 @@ export function ReviewsSection() {
     >
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
         <ScrollReveal className="mb-12 max-w-2xl lg:mb-12">
-          <p className="text-sm font-medium tracking-[0.12em] text-muted uppercase">
-            Google Reviews
-          </p>
+          <GoogleReviewsLabel />
           <h2
             id="reviews-heading"
             className="mt-3 text-[clamp(1.75rem,4vw,2.5rem)] leading-tight font-semibold tracking-[-0.02em] text-ink"
           >
-            What our customers are saying about us
+            Trusted by customers across the UK
           </h2>
         </ScrollReveal>
 
