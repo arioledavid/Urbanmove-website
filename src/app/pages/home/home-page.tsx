@@ -1,5 +1,5 @@
 import { HeroSection } from "./_components/hero-section";
-import { FeaturesSection } from "./_components/features-section";
+// import { FeaturesSection } from "./_components/features-section";
 import { ServicesSection } from "./_components/services-section";
 import { ReviewsSection } from "./_components/reviews-section";
 
@@ -8,7 +8,7 @@ export default function HomePage() {
     <main className="flex flex-1 flex-col">
       <HeroSection />
       <ReviewsSection />
-      <FeaturesSection />
+      {/* <FeaturesSection /> */}
       <ServicesSection />
     </main>
   );
