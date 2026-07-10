@@ -21,7 +21,7 @@ export function ReviewsSection() {
             id="reviews-heading"
             className="mt-3 text-[clamp(1.75rem,4vw,2.5rem)] leading-tight font-semibold tracking-[-0.02em] text-ink"
           >
-            Trusted by customers across the UK
+            What our customers are saying about us
           </h2>
         </ScrollReveal>
 
