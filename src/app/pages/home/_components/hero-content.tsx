@@ -9,7 +9,7 @@ import { getHomeHeroServiceTitles } from "@/lib/services-data";
 
 const HERO_SERVICES = getHomeHeroServiceTitles();
 
-const HEADLINE = "We move what matters.";
+const HEADLINE = "Where every move matters.";
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -49,7 +49,7 @@ export function HeroContent() {
 
   return (
     <motion.div
-      className="w-full min-w-0 max-w-3xl"
+      className="w-full min-w-0 max-w-3xl lg:max-w-none"
       variants={containerVariants}
       {...motionProps}
     >
@@ -58,13 +58,13 @@ export function HeroContent() {
         words={HEADLINE}
         duration={0.55}
         staggerDelay={0.1}
-        className="text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.05] font-semibold tracking-[-0.03em] text-balance text-paper"
+        className="text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[1.05] font-semibold tracking-[-0.03em] text-balance text-paper lg:text-wrap lg:whitespace-nowrap"
       />
 
       <motion.div variants={reduceMotion ? undefined : fadeUpVariants}>
         <LayoutTextFlip
           className="mt-5"
-          text="Your premium partner for UK"
+          text="Premium Transport Services accross the UK"
           words={HERO_SERVICES}
           textClassName="text-paper/90"
           pillClassName="bg-paper text-ink"
