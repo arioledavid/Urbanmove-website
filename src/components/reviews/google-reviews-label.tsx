@@ -9,17 +9,19 @@ const GOOGLE_COLORS = {
 
 type GoogleReviewsLabelProps = {
   className?: string;
+  id?: string;
 };
 
-export function GoogleReviewsLabel({ className }: GoogleReviewsLabelProps) {
+export function GoogleReviewsLabel({ className, id }: GoogleReviewsLabelProps) {
   return (
     <p
+      id={id}
       className={cn(
         "flex items-baseline gap-1 font-medium tracking-[0.12em]",
         className,
       )}
     >
-      <span aria-hidden className="text-lg">
+      <span aria-hidden className="text-2xl">
         <span style={{ color: GOOGLE_COLORS.blue }}>G</span>
         <span style={{ color: GOOGLE_COLORS.red }}>o</span>
         <span style={{ color: GOOGLE_COLORS.yellow }}>o</span>
@@ -27,7 +29,7 @@ export function GoogleReviewsLabel({ className }: GoogleReviewsLabelProps) {
         <span style={{ color: GOOGLE_COLORS.green }}>l</span>
         <span style={{ color: GOOGLE_COLORS.red }}>e</span>
       </span>
-      <span className="text-sm text-ink">Reviews</span>
+      <span className="text-base text-ink">Reviews</span>
     </p>
   );
 }

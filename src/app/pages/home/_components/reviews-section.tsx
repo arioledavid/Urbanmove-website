@@ -14,14 +14,8 @@ export function ReviewsSection() {
       aria-labelledby="reviews-heading"
     >
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
-        <ScrollReveal className="mb-12 max-w-2xl lg:mb-12">
-          <GoogleReviewsLabel />
-          <h2
-            id="reviews-heading"
-            className="mt-3 text-[clamp(1.25rem,2.5vw,1.875rem)] leading-tight font-semibold tracking-[-0.02em] text-ink"
-          >
-            Trusted by customers across the UK
-          </h2>
+        <ScrollReveal className="mb-10 max-w-2xl">
+          <GoogleReviewsLabel id="reviews-heading" />
         </ScrollReveal>
 
         <div className="hidden lg:block">
@@ -33,6 +27,12 @@ export function ReviewsSection() {
           className="flex justify-center pt-2 lg:hidden"
         >
           <ReviewCardStack reviews={REVIEWS} />
+        </ScrollReveal>
+
+        <ScrollReveal className="mt-10 max-w-2xl">
+          <p className="text-[clamp(1.25rem,2.5vw,1.875rem)] leading-tight font-semibold tracking-[-0.02em] text-ink">
+            Trusted by customers across the UK
+          </p>
         </ScrollReveal>
       </div>
     </section>
