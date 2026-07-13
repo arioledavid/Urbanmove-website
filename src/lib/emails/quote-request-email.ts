@@ -1,5 +1,15 @@
 import { EMAIL_BRAND } from "@/lib/emails/brand-tokens";
 import {
+  CONTACT_PREFERENCES,
+  COURIER_URGENCIES,
+  getOptionLabel,
+  getRemovalChipLabel,
+  ITEM_QUICK_PICKS,
+  MOVE_SIZES,
+  PROPERTY_TYPES,
+  TIME_BANDS,
+} from "@/lib/quote-form-data";
+import {
   QUOTE_SERVICE_LABELS,
   type QuoteRequestPayload,
 } from "@/lib/quote-request";
@@ -22,47 +32,201 @@ function formatValue(value: string | boolean): string {
   return trimmed || "—";
 }
 
-function formatDateTime(value: string): string {
+function formatDate(value: string): string {
   if (!value.trim()) return "—";
 
-  const parsed = new Date(value);
+  const parsed = new Date(`${value}T12:00:00`);
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(parsed);
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(
+    parsed,
+  );
 }
 
-function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, string]> {
+function pushIfPresent(
+  rows: Array<[string, string]>,
+  label: string,
+  value: string | boolean | string[],
+) {
+  if (Array.isArray(value)) {
+    if (value.length === 0) return;
+    const labels = value
+      .map((id) => getOptionLabel(ITEM_QUICK_PICKS, id))
+      .join(", ");
+    rows.push([label, labels]);
+    return;
+  }
+
+  if (typeof value === "boolean") {
+    if (!value) return;
+    rows.push([label, "Yes"]);
+    return;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "—") return;
+  rows.push([label, trimmed]);
+}
+
+function getServiceDisplayLabel(payload: QuoteRequestPayload): string {
+  if (payload.service === "removal") {
+    return (
+      getRemovalChipLabel(payload.removalServiceChip) ??
+      QUOTE_SERVICE_LABELS.removal
+    );
+  }
+
+  return QUOTE_SERVICE_LABELS[payload.service];
+}
+
+function buildGroupedRows(
+  payload: QuoteRequestPayload,
+): Array<{ title: string; rows: Array<[string, string]> }> {
+  const contactRows: Array<[string, string]> = [
+    ["Name", formatValue(payload.name)],
+    ["Email", formatValue(payload.email)],
+    ["Contact number", formatValue(payload.contactNumber)],
+  ];
+
+  pushIfPresent(
+    contactRows,
+    "Contact preference",
+    payload.contactPreference
+      ? getOptionLabel(CONTACT_PREFERENCES, payload.contactPreference)
+      : "",
+  );
+
   switch (payload.service) {
-    case "cargo":
+    case "cargo": {
+      const moveRows: Array<[string, string]> = [];
+      pushIfPresent(moveRows, "Origin", payload.origin);
+      pushIfPresent(moveRows, "Destination", payload.destination);
+      pushIfPresent(moveRows, "Weight (kg)", payload.weight);
+      pushIfPresent(moveRows, "Cargo description", payload.cargoDescription);
       return [
-        ["Origin", formatValue(payload.origin)],
-        ["Destination", formatValue(payload.destination)],
-        ["Weight (kg)", formatValue(payload.weight)],
-        ["Cargo description", formatValue(payload.cargoDescription)],
+        { title: "Contact", rows: contactRows },
+        { title: "Cargo details", rows: moveRows },
       ];
-    case "removal":
+    }
+    case "removal": {
+      const moveRows: Array<[string, string]> = [
+        [
+          "Service",
+          getRemovalChipLabel(payload.removalServiceChip) ??
+            formatValue(payload.removalServiceChip),
+        ],
+        ["Move size", getOptionLabel(MOVE_SIZES, payload.moveSize)],
+        ["Preferred date", formatDate(payload.moveDate)],
+      ];
+      pushIfPresent(
+        moveRows,
+        "Time band",
+        payload.timeBand
+          ? getOptionLabel(TIME_BANDS, payload.timeBand)
+          : "",
+      );
+
+      const collectionRows: Array<[string, string]> = [
+        ["Postcode", formatValue(payload.movingFromPostcode)],
+      ];
+      pushIfPresent(
+        collectionRows,
+        "Property type",
+        payload.movingFromPropertyType
+          ? getOptionLabel(PROPERTY_TYPES, payload.movingFromPropertyType)
+          : "",
+      );
+      pushIfPresent(collectionRows, "Floor level", payload.movingFromFloor);
+      pushIfPresent(
+        collectionRows,
+        "Lift access",
+        payload.movingFromLiftAccess,
+      );
+      pushIfPresent(
+        collectionRows,
+        "Parking / access notes",
+        payload.movingFromAccessNotes,
+      );
+
+      const deliveryRows: Array<[string, string]> = [
+        ["Postcode", formatValue(payload.movingToPostcode)],
+      ];
+      pushIfPresent(
+        deliveryRows,
+        "Property type",
+        payload.movingToPropertyType
+          ? getOptionLabel(PROPERTY_TYPES, payload.movingToPropertyType)
+          : "",
+      );
+      pushIfPresent(deliveryRows, "Floor level", payload.movingToFloor);
+      pushIfPresent(deliveryRows, "Lift access", payload.movingToLiftAccess);
+      pushIfPresent(
+        deliveryRows,
+        "Parking / access notes",
+        payload.movingToAccessNotes,
+      );
+
+      const itemRows: Array<[string, string]> = [];
+      pushIfPresent(itemRows, "Quick picks", payload.itemQuickPicks);
+      pushIfPresent(itemRows, "Additional notes", payload.removalItemNotes);
+
+      const extraHelpRows: Array<[string, string]> = [];
+      pushIfPresent(extraHelpRows, "Two movers", payload.extraHelpTwoMovers);
+      pushIfPresent(extraHelpRows, "Three movers", payload.extraHelpThreeMovers);
+      pushIfPresent(
+        extraHelpRows,
+        "Dismantling & reassembly",
+        payload.extraHelpDismantling,
+      );
+      pushIfPresent(extraHelpRows, "Packing service", payload.extraHelpPacking);
+      pushIfPresent(
+        extraHelpRows,
+        "Furniture wrapping",
+        payload.extraHelpWrapping,
+      );
+      pushIfPresent(extraHelpRows, "Waste disposal", payload.extraHelpWaste);
+      pushIfPresent(extraHelpRows, "Storage", payload.extraHelpStorage);
+
+      const groups = [
+        { title: "Move details", rows: moveRows },
+        { title: "Collection", rows: collectionRows },
+        { title: "Delivery", rows: deliveryRows },
+        ...(itemRows.length > 0 ? [{ title: "Items", rows: itemRows }] : []),
+        { title: "Contact", rows: contactRows },
+      ];
+
+      if (extraHelpRows.length > 0) {
+        groups.splice(4, 0, { title: "Extra help", rows: extraHelpRows });
+      }
+
+      return groups;
+    }
+    case "courier": {
+      const parcelRows: Array<[string, string]> = [];
+      pushIfPresent(parcelRows, "Pickup postcode", payload.pickupPostcode);
+      pushIfPresent(parcelRows, "Delivery postcode", payload.deliveryPostcode);
+      pushIfPresent(parcelRows, "Parcel description", payload.parcelDescription);
+      if (payload.courierDate.trim()) {
+        parcelRows.push([
+          "Preferred date",
+          formatDate(payload.courierDate),
+        ]);
+      }
+      pushIfPresent(
+        parcelRows,
+        "Urgency",
+        payload.courierUrgency
+          ? getOptionLabel(COURIER_URGENCIES, payload.courierUrgency)
+          : "",
+      );
+
       return [
-        ["Move date & time", formatDateTime(payload.moveDateTime)],
-        ["Moving from postcode", formatValue(payload.movingFromPostcode)],
-        ["Moving from floor", formatValue(payload.movingFromFloor)],
-        ["Lift access (from)", formatValue(payload.movingFromLiftAccess)],
-        ["Moving to postcode", formatValue(payload.movingToPostcode)],
-        ["Moving to floor", formatValue(payload.movingToFloor)],
-        ["Lift access (to)", formatValue(payload.movingToLiftAccess)],
-        ["Items to move", formatValue(payload.removalItems)],
+        { title: "Parcel details", rows: parcelRows },
+        { title: "Contact", rows: contactRows },
       ];
-    case "courier":
-      return [
-        ["Pickup postcode", formatValue(payload.pickupPostcode)],
-        ["Delivery postcode", formatValue(payload.deliveryPostcode)],
-        ["Parcel description", formatValue(payload.parcelDescription)],
-        ["Preferred date & time", formatDateTime(payload.courierDateTime)],
-      ];
+    }
   }
 }
 
@@ -82,15 +246,28 @@ function buildDetailRowsHtml(rows: Array<[string, string]>): string {
     .join("");
 }
 
+function buildGroupedHtml(
+  groups: Array<{ title: string; rows: Array<[string, string]> }>,
+): string {
+  return groups
+    .filter((group) => group.rows.length > 0)
+    .map(
+      (group) => `
+        <div style="margin-bottom:24px;">
+          <p style="margin:0 0 10px;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:${EMAIL_BRAND.primary};">
+            ${escapeHtml(group.title)}
+          </p>
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid ${EMAIL_BRAND.border};border-radius:${EMAIL_BRAND.radiusMd};overflow:hidden;">
+            ${buildDetailRowsHtml(group.rows)}
+          </table>
+        </div>`,
+    )
+    .join("");
+}
+
 function buildQuoteRequestEmailHtml(payload: QuoteRequestPayload): string {
-  const serviceLabel = QUOTE_SERVICE_LABELS[payload.service];
-  const contactRows: Array<[string, string]> = [
-    ["Name", formatValue(payload.name)],
-    ["Email", formatValue(payload.email)],
-    ["Contact number", formatValue(payload.contactNumber)],
-    ["Service", serviceLabel],
-  ];
-  const allRows = [...contactRows, ...buildServiceDetails(payload)];
+  const serviceLabel = getServiceDisplayLabel(payload);
+  const groups = buildGroupedRows(payload);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -125,9 +302,7 @@ function buildQuoteRequestEmailHtml(payload: QuoteRequestPayload): string {
             </tr>
             <tr>
               <td style="padding:0 32px 32px;">
-                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border:1px solid ${EMAIL_BRAND.border};border-radius:${EMAIL_BRAND.radiusMd};overflow:hidden;">
-                  ${buildDetailRowsHtml(allRows)}
-                </table>
+                ${buildGroupedHtml(groups)}
               </td>
             </tr>
             <tr>
@@ -152,25 +327,25 @@ function buildQuoteRequestEmailHtml(payload: QuoteRequestPayload): string {
 }
 
 export function buildQuoteRequestEmail(payload: QuoteRequestPayload) {
-  const serviceLabel = QUOTE_SERVICE_LABELS[payload.service];
-  const subject = `New quote request — ${serviceLabel} — ${payload.name}`;
+  const serviceLabel = getServiceDisplayLabel(payload);
+  const subject = `New Quote Request – ${serviceLabel} — ${payload.name}`;
+  const groups = buildGroupedRows(payload);
 
-  const contactRows: Array<[string, string]> = [
-    ["Name", formatValue(payload.name)],
-    ["Email", formatValue(payload.email)],
-    ["Contact number", formatValue(payload.contactNumber)],
-    ["Service", serviceLabel],
-  ];
+  const textSections = groups
+    .filter((group) => group.rows.length > 0)
+    .map(
+      (group) =>
+        `${group.title}\n${group.rows.map(([label, value]) => `${label}: ${value}`).join("\n")}`,
+    );
 
-  const allRows = [...contactRows, ...buildServiceDetails(payload)];
   const text = [
     "New quote request",
     "",
     "A new enquiry was submitted via the website contact form.",
     "",
-    ...allRows.map(([label, value]) => `${label}: ${value}`),
+    ...textSections,
     "",
-    `${SITE_NAME}`,
+    SITE_NAME,
     `${BUSINESS.telephoneDisplay} · ${BUSINESS.email}`,
     SITE_URL,
   ].join("\n");
