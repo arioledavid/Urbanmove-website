@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default:
-      "Urbanmove Logistics | Removals, Courier & Waste Clearance in Aberdeen",
+      "Urbanmove Logistics | Removals, Man and Van, Courier & Waste Clearance in Aberdeen",
     template: "%s | Urbanmove Logistics",
   },
   description:
