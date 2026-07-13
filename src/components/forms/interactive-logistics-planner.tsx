@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useRef, useState, type FormEvent } from "react";
+import { RemovalItemsTagInput } from "@/components/forms/removal-items-tag-input";
 import { getPlannerServiceFromSlug } from "@/lib/services-data";
 import { cn } from "@/lib/utils";
 
@@ -602,16 +603,13 @@ function RemovalFields({
           {step === "items" ? (
             <div className="space-y-4">
               <Field label="List of items to be moved" htmlFor="removalItems">
-                <textarea
+                <RemovalItemsTagInput
                   id="removalItems"
-                  rows={4}
                   value={form.removalItems}
-                  onChange={(event) => {
-                    updateField("removalItems", event.target.value);
+                  onChange={(next) => {
+                    updateField("removalItems", next);
                     clearError("removalItems");
                   }}
-                  className={cn(inputClasses(), "resize-none")}
-                  placeholder="Furniture, appliances, boxes. Include approximate quantities"
                 />
               </Field>
 
