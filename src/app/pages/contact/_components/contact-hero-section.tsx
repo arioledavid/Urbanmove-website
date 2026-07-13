@@ -6,13 +6,23 @@ import {
   PageRevealItem,
   PageStagger,
 } from "@/components/motion/page-reveal";
+import { cn } from "@/lib/utils";
 
-const HEADLINE = "Get a free quote in Aberdeen.";
+const HEADLINE = "Get a free quote.";
 
 const TRUST_POINTS = [
-  "Fully insured",
-  "Aberdeen-based team",
-  "Same-day available",
+  {
+    label: "Fully insured",
+    className: "border-primary/25 bg-primary/10 text-primary",
+  },
+  {
+    label: "Aberdeen-based team",
+    className: "border-ink/15 bg-ink text-paper",
+  },
+  {
+    label: "Same-day available",
+    className: "border-tertiary/40 bg-tertiary text-ink",
+  },
 ] as const;
 
 export function ContactHeroSection() {
@@ -48,9 +58,8 @@ export function ContactHeroSection() {
 
           <PageRevealItem>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
-              Tell us what you need moved in Aberdeen — house and office
-              removals, same-day courier, furniture delivery and assembly,
-              household waste clearance, student moves or cargo freight — and
+              Tell us about your move, house and office removals, same-day courier, furniture delivery and assembly,
+              household waste clearance, student moves or cargo freight and
               we will come back with a clear, no-obligation quote.
             </p>
           </PageRevealItem>
@@ -61,12 +70,15 @@ export function ContactHeroSection() {
 
           <PageRevealItem>
             <ul className="mt-8 flex flex-wrap gap-2.5">
-              {TRUST_POINTS.map((point) => (
+              {TRUST_POINTS.map(({ label, className }) => (
                 <li
-                  key={point}
-                  className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-ink/85"
+                  key={label}
+                  className={cn(
+                    "rounded-full border px-4 py-2 text-sm font-medium",
+                    className,
+                  )}
                 >
-                  {point}
+                  {label}
                 </li>
               ))}
             </ul>

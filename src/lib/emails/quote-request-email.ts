@@ -36,6 +36,44 @@ function formatDateTime(value: string): string {
   }).format(parsed);
 }
 
+const ADDITIONAL_SERVICE_EMAIL_ROWS: Array<{
+  key: keyof QuoteRequestPayload;
+  label: string;
+}> = [
+  {
+    key: "additionalEndOfTenancyCleaning",
+    label: "End of Tenancy Cleaning",
+  },
+  {
+    key: "additionalProfessionalPacking",
+    label: "Professional Packing Services",
+  },
+  {
+    key: "additionalFurnitureDismantling",
+    label: "Furniture Dismantling & Reassembly",
+  },
+  {
+    key: "additionalMovingSupplies",
+    label: "Moving Supplies (Boxes, Tape & Packing Materials)",
+  },
+  {
+    key: "additionalSecureStorage",
+    label: "Secure Storage Solutions",
+  },
+  {
+    key: "additionalWasteRemoval",
+    label: "Waste Removal (SEPA Licensed)",
+  },
+];
+
+function buildAdditionalServiceRows(
+  payload: QuoteRequestPayload,
+): Array<[string, string]> {
+  return ADDITIONAL_SERVICE_EMAIL_ROWS.filter(
+    (option) => payload[option.key] === true,
+  ).map((option) => [option.label, "Yes"]);
+}
+
 function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, string]> {
   switch (payload.service) {
     case "cargo":
@@ -51,10 +89,13 @@ function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, strin
         ["Moving from postcode", formatValue(payload.movingFromPostcode)],
         ["Moving from floor", formatValue(payload.movingFromFloor)],
         ["Lift access (from)", formatValue(payload.movingFromLiftAccess)],
+        ["Parking / access (from)", formatValue(payload.movingFromParkingNotes)],
         ["Moving to postcode", formatValue(payload.movingToPostcode)],
         ["Moving to floor", formatValue(payload.movingToFloor)],
         ["Lift access (to)", formatValue(payload.movingToLiftAccess)],
+        ["Parking / access (to)", formatValue(payload.movingToParkingNotes)],
         ["Items to move", formatValue(payload.removalItems)],
+        ...buildAdditionalServiceRows(payload),
       ];
     case "courier":
       return [
@@ -153,7 +194,7 @@ function buildQuoteRequestEmailHtml(payload: QuoteRequestPayload): string {
 
 export function buildQuoteRequestEmail(payload: QuoteRequestPayload) {
   const serviceLabel = QUOTE_SERVICE_LABELS[payload.service];
-  const subject = `New quote request — ${serviceLabel} — ${payload.name}`;
+  const subject = `New quote request: ${serviceLabel} (${payload.name})`;
 
   const contactRows: Array<[string, string]> = [
     ["Name", formatValue(payload.name)],

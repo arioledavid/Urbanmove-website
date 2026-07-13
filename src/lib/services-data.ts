@@ -235,7 +235,7 @@ export const SERVICES_DATA = {
       {
         title: "Settled in",
         description:
-          "Confirm everything is in place before we leave—no hidden extras.",
+          "Confirm everything is in place before we leave, with no hidden extras.",
       },
     ],
     features: [

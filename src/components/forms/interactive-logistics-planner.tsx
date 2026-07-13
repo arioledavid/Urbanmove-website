@@ -49,10 +49,18 @@ type FormState = {
   movingFromPostcode: string;
   movingFromFloor: string;
   movingFromLiftAccess: boolean;
+  movingFromParkingNotes: string;
   movingToPostcode: string;
   movingToFloor: string;
   movingToLiftAccess: boolean;
+  movingToParkingNotes: string;
   removalItems: string;
+  additionalEndOfTenancyCleaning: boolean;
+  additionalProfessionalPacking: boolean;
+  additionalFurnitureDismantling: boolean;
+  additionalMovingSupplies: boolean;
+  additionalSecureStorage: boolean;
+  additionalWasteRemoval: boolean;
   pickupPostcode: string;
   deliveryPostcode: string;
   parcelDescription: string;
@@ -75,10 +83,18 @@ const INITIAL_FORM_STATE: FormState = {
   movingFromPostcode: "",
   movingFromFloor: "",
   movingFromLiftAccess: false,
+  movingFromParkingNotes: "",
   movingToPostcode: "",
   movingToFloor: "",
   movingToLiftAccess: false,
+  movingToParkingNotes: "",
   removalItems: "",
+  additionalEndOfTenancyCleaning: false,
+  additionalProfessionalPacking: false,
+  additionalFurnitureDismantling: false,
+  additionalMovingSupplies: false,
+  additionalSecureStorage: false,
+  additionalWasteRemoval: false,
   pickupPostcode: "",
   deliveryPostcode: "",
   parcelDescription: "",
@@ -92,9 +108,17 @@ const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
     "moveDateTime",
     "movingFromPostcode",
     "movingFromFloor",
+    "movingFromParkingNotes",
     "movingToPostcode",
     "movingToFloor",
+    "movingToParkingNotes",
     "removalItems",
+    "additionalEndOfTenancyCleaning",
+    "additionalProfessionalPacking",
+    "additionalFurnitureDismantling",
+    "additionalMovingSupplies",
+    "additionalSecureStorage",
+    "additionalWasteRemoval",
   ],
   courier: [
     "pickupPostcode",
@@ -107,11 +131,12 @@ const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
 function clearServiceFields(service: ServiceId): Partial<FormState> {
   const patch: Partial<FormState> = {};
   for (const key of SERVICE_FIELD_KEYS[service]) {
-    if (key === "movingFromLiftAccess" || key === "movingToLiftAccess") {
-      patch[key] = false;
-    } else {
-      (patch as Record<string, string>)[key] = "";
-    }
+    const value = INITIAL_FORM_STATE[key];
+    (patch as Record<string, unknown>)[key] = Array.isArray(value)
+      ? []
+      : typeof value === "boolean"
+        ? false
+        : value;
   }
   if (service === "removal") {
     patch.movingFromLiftAccess = false;
@@ -235,6 +260,89 @@ function LiftToggle({ id, label, checked, onChange }: ToggleProps) {
   );
 }
 
+const ADDITIONAL_SERVICE_OPTIONS = [
+  {
+    key: "additionalEndOfTenancyCleaning",
+    label: "End of Tenancy Cleaning",
+  },
+  {
+    key: "additionalProfessionalPacking",
+    label: "Professional Packing Services",
+  },
+  {
+    key: "additionalFurnitureDismantling",
+    label: "Furniture Dismantling & Reassembly",
+  },
+  {
+    key: "additionalMovingSupplies",
+    label: "Moving Supplies (Boxes, Tape & Packing Materials)",
+  },
+  {
+    key: "additionalSecureStorage",
+    label: "Secure Storage Solutions",
+  },
+  {
+    key: "additionalWasteRemoval",
+    label: "Waste Removal (SEPA Licensed)",
+  },
+] as const satisfies ReadonlyArray<{
+  key: keyof FormState;
+  label: string;
+}>;
+
+type AdditionalServicesAccordionProps = {
+  form: FormState;
+  formId: string;
+  updateField: <K extends keyof FormState>(
+    key: K,
+    value: FormState[K],
+  ) => void;
+};
+
+function AdditionalServicesAccordion({
+  form,
+  formId,
+  updateField,
+}: AdditionalServicesAccordionProps) {
+  return (
+    <details className="group rounded-xl border border-border bg-surface">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium text-ink marker:content-none [&::-webkit-details-marker]:hidden">
+        Additional services
+        <span
+          className="text-subtle transition-transform duration-200 group-open:rotate-180"
+          aria-hidden
+        >
+          ▾
+        </span>
+      </summary>
+      <div className="space-y-1 border-t border-border px-4 py-4">
+        <p className="mb-3 text-sm leading-relaxed text-subtle">
+          Optional add-ons for your move. Tick anything that applies and
+          we&apos;ll include it in your quote.
+        </p>
+        {ADDITIONAL_SERVICE_OPTIONS.map((option) => (
+          <label
+            key={option.key}
+            htmlFor={`${formId}-${option.key}`}
+            className="flex min-h-10 cursor-pointer items-center gap-3 rounded-lg px-1 py-1 text-sm text-ink transition-colors duration-200 has-focus-visible:text-primary"
+          >
+            <input
+              id={`${formId}-${option.key}`}
+              type="checkbox"
+              checked={form[option.key] as boolean}
+              onChange={(event) =>
+                updateField(option.key, event.target.checked as FormState[typeof option.key])
+              }
+              className="h-4 w-4 shrink-0 rounded border-border bg-paper text-primary focus:ring-2 focus:ring-primary/40 focus:ring-offset-0"
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+    </details>
+  );
+}
+
 type ConditionalSectionProps = {
   serviceKey: ServiceId;
   activeService: ServiceId | null;
@@ -274,6 +382,7 @@ function ConditionalSection({
 
 type RemovalFieldsProps = {
   form: FormState;
+  formId: string;
   updateField: <K extends keyof FormState>(
     key: K,
     value: FormState[K],
@@ -284,6 +393,7 @@ type RemovalFieldsProps = {
 
 function RemovalFields({
   form,
+  formId,
   updateField,
   clearError,
   dateTimeClasses,
@@ -404,6 +514,23 @@ function RemovalFields({
                   updateField("movingFromLiftAccess", checked)
                 }
               />
+
+              <Field
+                label="Parking / access notes"
+                htmlFor="movingFromParkingNotes"
+              >
+                <textarea
+                  id="movingFromParkingNotes"
+                  rows={3}
+                  value={form.movingFromParkingNotes}
+                  onChange={(event) => {
+                    updateField("movingFromParkingNotes", event.target.value);
+                    clearError("movingFromParkingNotes");
+                  }}
+                  className={cn(inputClasses(), "resize-none")}
+                  placeholder="e.g. On-street parking only, residents' permit zone, loading bay 50m away"
+                />
+              </Field>
             </div>
           ) : null}
 
@@ -452,23 +579,48 @@ function RemovalFields({
                   updateField("movingToLiftAccess", checked)
                 }
               />
+
+              <Field
+                label="Parking / access notes"
+                htmlFor="movingToParkingNotes"
+              >
+                <textarea
+                  id="movingToParkingNotes"
+                  rows={3}
+                  value={form.movingToParkingNotes}
+                  onChange={(event) => {
+                    updateField("movingToParkingNotes", event.target.value);
+                    clearError("movingToParkingNotes");
+                  }}
+                  className={cn(inputClasses(), "resize-none")}
+                  placeholder="e.g. Private driveway, narrow gate, council loading permit required"
+                />
+              </Field>
             </div>
           ) : null}
 
           {step === "items" ? (
-            <Field label="List of items to be moved" htmlFor="removalItems">
-              <textarea
-                id="removalItems"
-                rows={4}
-                value={form.removalItems}
-                onChange={(event) => {
-                  updateField("removalItems", event.target.value);
-                  clearError("removalItems");
-                }}
-                className={cn(inputClasses(), "resize-none")}
-                placeholder="Furniture, appliances, boxes — include approximate quantities"
+            <div className="space-y-4">
+              <Field label="List of items to be moved" htmlFor="removalItems">
+                <textarea
+                  id="removalItems"
+                  rows={4}
+                  value={form.removalItems}
+                  onChange={(event) => {
+                    updateField("removalItems", event.target.value);
+                    clearError("removalItems");
+                  }}
+                  className={cn(inputClasses(), "resize-none")}
+                  placeholder="Furniture, appliances, boxes. Include approximate quantities"
+                />
+              </Field>
+
+              <AdditionalServicesAccordion
+                form={form}
+                formId={formId}
+                updateField={updateField}
               />
-            </Field>
+            </div>
           ) : null}
         </motion.div>
       </AnimatePresence>
@@ -698,17 +850,6 @@ export function InteractiveLogisticsPlanner({
       >
         {statusMessage}
       </div>
-
-      <div className="mb-8 border-b border-border pb-8">
-        <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl text-balance">
-          Tell us what you need moved
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-subtle text-pretty">
-          Select a service below and the form will adapt to capture exactly the
-          right details for your quote.
-        </p>
-      </div>
-
       <div className="space-y-5">
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Name" htmlFor="name" required error={errors.name}>
@@ -878,6 +1019,7 @@ export function InteractiveLogisticsPlanner({
             <ConditionalSection serviceKey="removal" activeService={form.service}>
               <RemovalFields
                 form={form}
+                formId={formId}
                 updateField={updateField}
                 clearError={clearError}
                 dateTimeClasses={dateTimeClasses}

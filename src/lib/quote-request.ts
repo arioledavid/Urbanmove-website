@@ -15,10 +15,18 @@ export type QuoteRequestPayload = {
   movingFromPostcode: string;
   movingFromFloor: string;
   movingFromLiftAccess: boolean;
+  movingFromParkingNotes: string;
   movingToPostcode: string;
   movingToFloor: string;
   movingToLiftAccess: boolean;
+  movingToParkingNotes: string;
   removalItems: string;
+  additionalEndOfTenancyCleaning: boolean;
+  additionalProfessionalPacking: boolean;
+  additionalFurnitureDismantling: boolean;
+  additionalMovingSupplies: boolean;
+  additionalSecureStorage: boolean;
+  additionalWasteRemoval: boolean;
   pickupPostcode: string;
   deliveryPostcode: string;
   parcelDescription: string;
@@ -92,10 +100,20 @@ export function validateQuoteRequest(
       movingFromPostcode: readString("movingFromPostcode"),
       movingFromFloor: readString("movingFromFloor"),
       movingFromLiftAccess: readBoolean("movingFromLiftAccess"),
+      movingFromParkingNotes: readString("movingFromParkingNotes"),
       movingToPostcode: readString("movingToPostcode"),
       movingToFloor: readString("movingToFloor"),
       movingToLiftAccess: readBoolean("movingToLiftAccess"),
+      movingToParkingNotes: readString("movingToParkingNotes"),
       removalItems: readString("removalItems"),
+      additionalEndOfTenancyCleaning: readBoolean(
+        "additionalEndOfTenancyCleaning",
+      ),
+      additionalProfessionalPacking: readBoolean("additionalProfessionalPacking"),
+      additionalFurnitureDismantling: readBoolean("additionalFurnitureDismantling"),
+      additionalMovingSupplies: readBoolean("additionalMovingSupplies"),
+      additionalSecureStorage: readBoolean("additionalSecureStorage"),
+      additionalWasteRemoval: readBoolean("additionalWasteRemoval"),
       pickupPostcode: readString("pickupPostcode"),
       deliveryPostcode: readString("deliveryPostcode"),
       parcelDescription: readString("parcelDescription"),
