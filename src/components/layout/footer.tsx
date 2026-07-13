@@ -52,7 +52,7 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <LogoLink className="h-14 w-auto" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted text-pretty">
-              Removals, courier and waste clearance across Aberdeen and the UK.
+              Removals, Man and Van, Courier and Household Waste Clearance across Aberdeen and the UK.
             </p>
           </div>
 
