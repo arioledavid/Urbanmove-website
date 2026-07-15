@@ -31,7 +31,7 @@ export function RemovalItemsTagInput({
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [highlight, setHighlight] = useState(0);
+  const [highlight, setHighlight] = useState(-1);
 
   const entries = useMemo(() => parseRemovalItemEntries(value), [value]);
   const labels = useMemo(
@@ -64,7 +64,7 @@ export function RemovalItemsTagInput({
   function clearQuery(refocus: boolean) {
     setQuery("");
     setOpen(false);
-    setHighlight(0);
+    setHighlight(-1);
     if (refocus) {
       requestAnimationFrame(() => inputRef.current?.focus());
     }
@@ -110,9 +110,10 @@ export function RemovalItemsTagInput({
     );
   }
 
-  const activeOptionId = showList
-    ? `${listboxId}-option-${highlight}`
-    : undefined;
+  const activeOptionId =
+    showList && highlight >= 0
+      ? `${listboxId}-option-${highlight}`
+      : undefined;
 
   return (
     <div ref={wrapperRef} className="relative">
@@ -187,7 +188,7 @@ export function RemovalItemsTagInput({
           className="w-full border-0 bg-transparent px-1 py-1.5 text-sm text-ink outline-none placeholder:text-subtle"
           onChange={(event) => {
             setQuery(event.target.value);
-            setHighlight(0);
+            setHighlight(-1);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
@@ -212,15 +213,18 @@ export function RemovalItemsTagInput({
             if (showList) {
               if (event.key === "ArrowDown") {
                 event.preventDefault();
-                setHighlight((current) => (current + 1) % suggestions.length);
+                setHighlight((current) =>
+                  current < 0 ? 0 : (current + 1) % suggestions.length,
+                );
                 return;
               }
 
               if (event.key === "ArrowUp") {
                 event.preventDefault();
-                setHighlight(
-                  (current) =>
-                    (current - 1 + suggestions.length) % suggestions.length,
+                setHighlight((current) =>
+                  current < 0
+                    ? suggestions.length - 1
+                    : (current - 1 + suggestions.length) % suggestions.length,
                 );
                 return;
               }
@@ -228,17 +232,23 @@ export function RemovalItemsTagInput({
               if (event.key === "Escape") {
                 event.preventDefault();
                 setOpen(false);
+                setHighlight(-1);
                 return;
               }
             }
 
             if (event.key === "Enter") {
               event.preventDefault();
-              if (showList && suggestions[highlight]) {
+              if (showList && highlight >= 0 && suggestions[highlight]) {
                 addTag(suggestions[highlight]!);
-              } else {
-                addTag(query);
+                return;
               }
+
+              const exactMatch = suggestions.find(
+                (suggestion) =>
+                  suggestion.toLowerCase() === query.trim().toLowerCase(),
+              );
+              addTag(exactMatch ?? query);
             }
           }}
         />
