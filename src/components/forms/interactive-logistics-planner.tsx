@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { RemovalItemsTagInput } from "@/components/forms/removal-items-tag-input";
 import { getPlannerServiceFromSlug } from "@/lib/services-data";
 import { cn } from "@/lib/utils";
@@ -27,6 +27,31 @@ const FLOOR_OPTIONS = [
   "4th Floor+",
 ] as const;
 
+const PROPERTY_TYPE_OPTIONS = [
+  "Office",
+  "House",
+  "Flat",
+  "Storage Unit",
+  "Other",
+] as const;
+
+function formatTimeLabel(totalMinutes: number): string {
+  const minutesInDay = 24 * 60;
+  const normalized =
+    ((totalMinutes % minutesInDay) + minutesInDay) % minutesInDay;
+  const hours24 = Math.floor(normalized / 60);
+  const minutes = normalized % 60;
+  const period = hours24 < 12 ? "AM" : "PM";
+  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  return `${hours12}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
+const TIME_WINDOW_OPTIONS = Array.from({ length: 48 }, (_, index) => {
+  const startMinutes = 7 * 60 + index * 30;
+  const endMinutes = startMinutes + 120;
+  return `${formatTimeLabel(startMinutes)} - ${formatTimeLabel(endMinutes)}`;
+});
+
 const REMOVAL_STEPS = [
   { id: "when", label: "When" },
   { id: "from", label: "Moving from" },
@@ -46,8 +71,10 @@ type FormState = {
   destination: string;
   weight: string;
   cargoDescription: string;
-  moveDateTime: string;
+  moveDate: string;
+  moveTimeWindow: string;
   movingFromPostcode: string;
+  movingFromPropertyType: string;
   movingFromFloor: string;
   movingFromLiftAccess: boolean;
   movingFromParkingNotes: string;
@@ -80,8 +107,10 @@ const INITIAL_FORM_STATE: FormState = {
   destination: "",
   weight: "",
   cargoDescription: "",
-  moveDateTime: "",
+  moveDate: "",
+  moveTimeWindow: "",
   movingFromPostcode: "",
+  movingFromPropertyType: "",
   movingFromFloor: "",
   movingFromLiftAccess: false,
   movingFromParkingNotes: "",
@@ -106,8 +135,10 @@ const INITIAL_FORM_STATE: FormState = {
 const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
   // cargo: ["origin", "destination", "weight", "cargoDescription"],
   removal: [
-    "moveDateTime",
+    "moveDate",
+    "moveTimeWindow",
     "movingFromPostcode",
+    "movingFromPropertyType",
     "movingFromFloor",
     "movingFromParkingNotes",
     "movingToPostcode",
@@ -258,6 +289,170 @@ function LiftToggle({ id, label, checked, onChange }: ToggleProps) {
         />
       </span>
     </label>
+  );
+}
+
+type TimeWindowSelectProps = {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+};
+
+function TimeWindowSelect({ id, value, onChange }: TimeWindowSelectProps) {
+  const listboxId = `${id}-listbox`;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(() => {
+    const index = TIME_WINDOW_OPTIONS.indexOf(value);
+    return index >= 0 ? index : 0;
+  });
+
+  const selectedIndex = (() => {
+    const index = TIME_WINDOW_OPTIONS.indexOf(value);
+    return index >= 0 ? index : 0;
+  })();
+
+  const openList = () => {
+    setHighlight(selectedIndex);
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const frame = requestAnimationFrame(() => {
+      const option = listRef.current?.querySelector<HTMLElement>(
+        `[data-index="${selectedIndex}"]`,
+      );
+      option?.scrollIntoView({ block: "nearest" });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [open, selectedIndex]);
+
+  const selectOption = (option: string) => {
+    onChange(option);
+    setOpen(false);
+  };
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        onClick={() => {
+          if (open) {
+            setOpen(false);
+            return;
+          }
+          openList();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openList();
+          }
+        }}
+        className={cn(
+          inputClasses(),
+          "flex cursor-pointer items-center justify-between gap-3 text-left",
+          !value && "text-subtle",
+        )}
+      >
+        <span className="truncate">
+          {value || "Select time window"}
+        </span>
+        <span
+          className={cn(
+            "text-muted transition-transform duration-200",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        >
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2.5 4.5L6 8L9.5 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+
+      {open ? (
+        <ul
+          ref={listRef}
+          id={listboxId}
+          role="listbox"
+          aria-label="Preferred time window"
+          className="absolute left-0 top-full z-20 mt-1 max-h-72 w-full max-w-[20rem] overflow-auto rounded-xl border border-border bg-paper py-1 shadow-sm"
+        >
+          {TIME_WINDOW_OPTIONS.map((option, index) => {
+            const isSelected = option === value;
+            const isActive = index === highlight;
+
+            return (
+              <li key={option} role="option" aria-selected={isSelected}>
+                <button
+                  type="button"
+                  data-index={index}
+                  className={cn(
+                    "flex w-full px-3 py-2 text-left text-sm transition-colors duration-150",
+                    isSelected
+                      ? "bg-primary/10 text-ink"
+                      : isActive
+                        ? "bg-surface text-ink"
+                        : "text-ink hover:bg-surface",
+                  )}
+                  onMouseEnter={() => setHighlight(index)}
+                  onMouseDown={(event) => {
+                    event.preventDefault();
+                    selectOption(option);
+                  }}
+                >
+                  {option}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
+    </div>
   );
 }
 
@@ -453,21 +648,31 @@ function RemovalFields({
           transition={{ duration: 0.3, ease: PREMIUM_EASE }}
         >
           {step === "when" ? (
-            <Field
-              label="Preferred move date / time"
-              htmlFor="moveDateTime"
-            >
-              <input
-                id="moveDateTime"
-                type="datetime-local"
-                value={form.moveDateTime}
-                onChange={(event) => {
-                  updateField("moveDateTime", event.target.value);
-                  clearError("moveDateTime");
-                }}
-                className={dateTimeClasses}
-              />
-            </Field>
+            <div className="space-y-4">
+              <Field label="Preferred move date" htmlFor="moveDate">
+                <input
+                  id="moveDate"
+                  type="date"
+                  value={form.moveDate}
+                  onChange={(event) => {
+                    updateField("moveDate", event.target.value);
+                    clearError("moveDate");
+                  }}
+                  className={dateTimeClasses}
+                />
+              </Field>
+
+              <Field label="Preferred time window" htmlFor="moveTimeWindow">
+                <TimeWindowSelect
+                  id="moveTimeWindow"
+                  value={form.moveTimeWindow}
+                  onChange={(nextValue) => {
+                    updateField("moveTimeWindow", nextValue);
+                    clearError("moveTimeWindow");
+                  }}
+                />
+              </Field>
+            </div>
           ) : null}
 
           {step === "from" ? (
@@ -484,6 +689,27 @@ function RemovalFields({
                   className={inputClasses()}
                   placeholder="e.g. SW1A 1AA"
                 />
+              </Field>
+
+              <Field label="Property type" htmlFor="movingFromPropertyType">
+                <select
+                  id="movingFromPropertyType"
+                  value={form.movingFromPropertyType}
+                  onChange={(event) => {
+                    updateField("movingFromPropertyType", event.target.value);
+                    clearError("movingFromPropertyType");
+                  }}
+                  className={cn(inputClasses(), "cursor-pointer")}
+                >
+                  <option value="" className="bg-paper">
+                    Select property type
+                  </option>
+                  {PROPERTY_TYPE_OPTIONS.map((type) => (
+                    <option key={type} value={type} className="bg-paper">
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </Field>
 
               <Field label="Property floor level" htmlFor="movingFromFloor">
