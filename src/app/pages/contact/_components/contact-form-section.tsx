@@ -13,7 +13,7 @@ export function ContactFormSection({ serviceSlug }: ContactFormSectionProps) {
   return (
     <section
       id="quote"
-      className="bg-surface pb-24 sm:pb-28 lg:pb-32"
+      className="bg-surface pt-16 pb-24 sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32"
       aria-labelledby="quote-form-heading"
     >
       <div className="mx-auto max-w-3xl px-6 sm:px-10 lg:px-16">

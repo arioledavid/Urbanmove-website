@@ -36,6 +36,19 @@ function formatDateTime(value: string): string {
   }).format(parsed);
 }
 
+function formatDate(value: string): string {
+  if (!value.trim()) return "—";
+
+  const parsed = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+  }).format(parsed);
+}
+
 const ADDITIONAL_SERVICE_EMAIL_ROWS: Array<{
   key: keyof QuoteRequestPayload;
   label: string;
@@ -85,8 +98,13 @@ function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, strin
       ];
     case "removal":
       return [
-        ["Move date & time", formatDateTime(payload.moveDateTime)],
+        ["Move date", formatDate(payload.moveDate)],
+        ["Move time window", formatValue(payload.moveTimeWindow)],
         ["Moving from postcode", formatValue(payload.movingFromPostcode)],
+        [
+          "Moving from property type",
+          formatValue(payload.movingFromPropertyType),
+        ],
         ["Moving from floor", formatValue(payload.movingFromFloor)],
         ["Lift access (from)", formatValue(payload.movingFromLiftAccess)],
         ["Parking / access (from)", formatValue(payload.movingFromParkingNotes)],

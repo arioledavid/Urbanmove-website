@@ -11,8 +11,10 @@ export type QuoteRequestPayload = {
   destination: string;
   weight: string;
   cargoDescription: string;
-  moveDateTime: string;
+  moveDate: string;
+  moveTimeWindow: string;
   movingFromPostcode: string;
+  movingFromPropertyType: string;
   movingFromFloor: string;
   movingFromLiftAccess: boolean;
   movingFromParkingNotes: string;
@@ -96,8 +98,10 @@ export function validateQuoteRequest(
       destination: readString("destination"),
       weight: readString("weight"),
       cargoDescription: readString("cargoDescription"),
-      moveDateTime: readString("moveDateTime"),
+      moveDate: readString("moveDate"),
+      moveTimeWindow: readString("moveTimeWindow"),
       movingFromPostcode: readString("movingFromPostcode"),
+      movingFromPropertyType: readString("movingFromPropertyType"),
       movingFromFloor: readString("movingFromFloor"),
       movingFromLiftAccess: readBoolean("movingFromLiftAccess"),
       movingFromParkingNotes: readString("movingFromParkingNotes"),

@@ -13,7 +13,7 @@ const HEADLINE = "Get a free quote.";
 const TRUST_POINTS = [
   {
     label: "Fully insured",
-    className: "border-primary/25 bg-primary/10 text-primary",
+    className: "border-primary bg-primary text-paper",
   },
   {
     label: "Aberdeen-based team",
