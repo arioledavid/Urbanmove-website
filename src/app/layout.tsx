@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
-import {
-  GoogleAnalytics,
-  GoogleTagManager,
-} from "@next/third-parties/google";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { JsonLd } from "@/components/seo/json-ld";
 import {
   DEFAULT_KEYWORDS,
   defaultOpenGraphImages,
-  getMovingCompanyJsonLd,
   SITE_NAME,
   SITE_URL,
 } from "@/lib/seo";
@@ -56,12 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
-const gaId =
-  process.env.NEXT_PUBLIC_GA_ID ??
-  (gtmId?.startsWith("G-") ? gtmId : undefined);
-const gtmContainerId = gtmId?.startsWith("GTM-") ? gtmId : undefined;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -72,16 +58,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
-        {gtmContainerId ? (
-          <GoogleTagManager gtmId={gtmContainerId} />
-        ) : null}
-        <JsonLd data={getMovingCompanyJsonLd()} />
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

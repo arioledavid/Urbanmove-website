@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { buildQuoteRequestEmail } from "@/lib/emails/quote-request-email";
 import { getResendClient } from "@/lib/resend";
 import { validateQuoteRequest } from "@/lib/quote-request";
+import { quotePayloadToEnquiryInput } from "@/lib/quote-to-enquiry";
+import { enquiryService } from "@/lib/services/enquiry-service";
 import { BUSINESS } from "@/lib/seo";
 
 export async function POST(request: Request) {
@@ -19,6 +21,17 @@ export async function POST(request: Request) {
   const validation = validateQuoteRequest(body);
   if (!validation.ok) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
+  }
+
+  // Persist enquiry — failures must not block the customer-facing email.
+  const enquiryInput = quotePayloadToEnquiryInput(validation.data);
+  const persistResult = await enquiryService.create(enquiryInput);
+  if (!persistResult.success) {
+    console.error(
+      "Quote enquiry persistence failed:",
+      persistResult.error,
+      validation.data.email,
+    );
   }
 
   const from =
@@ -54,5 +67,10 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({
+    ok: true,
+    enquiryReference: persistResult.success
+      ? persistResult.data.reference
+      : undefined,
+  });
 }

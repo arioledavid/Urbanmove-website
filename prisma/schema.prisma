@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  QUOTE_SENT
+  ACCEPTED
+  DEPOSIT_PAID
+  JOB_CREATED
+  SCHEDULED
+  COMPLETED
+  LOST
+  SPAM
+}
+
+enum ServiceType {
+  REMOVAL
+  COURIER
+  CARGO
+  OTHER
+}
+
+enum JobStatus {
+  DRAFT
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ActivityType {
+  ENQUIRY_CREATED
+  ENQUIRY_UPDATED
+  ENQUIRY_STATUS_CHANGED
+  JOB_CREATED
+  JOB_UPDATED
+  JOB_STATUS_CHANGED
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+}
+
+model User {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  email             String   @unique
+  name              String?
+  passwordHash      String?
+  role              Role     @default(STAFF)
+  active            Boolean  @default(true)
+  passwordChangedAt DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  activities Activity[] @relation("ActivityActor")
+}
+
+model Enquiry {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  reference   String        @unique
+  status      EnquiryStatus @default(NEW)
+  serviceType ServiceType
+
+  contactName  String
+  contactEmail String
+  contactPhone String
+
+  fromAddress  String?
+  toAddress    String?
+  postcodeFrom String?
+  postcodeTo   String?
+  moveDate     DateTime?
+  propertyType String?
+
+  payload Json
+  source  String @default("website")
+
+  assignedToId String? @db.ObjectId
+
+  job Job?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@index([postcodeFrom, postcodeTo])
+  @@index([moveDate])
+}
+
+model Job {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  reference   String     @unique
+  status      JobStatus  @default(DRAFT)
+  title       String
+  serviceType ServiceType
+
+  scheduledStart DateTime?
+  scheduledEnd   DateTime?
+
+  enquiryId String  @unique @db.ObjectId
+  enquiry   Enquiry @relation(fields: [enquiryId], references: [id])
+
+  addressFrom String?
+  addressTo   String?
+  notes       String?
+
+  /// Temporary staff assignment until Phase 3 introduces a StaffAssignment relation model.
+  /// Will be replaced — do not build UI that assumes this shape is permanent.
+  assignedStaffIds String[] @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([scheduledStart, scheduledEnd])
+  @@index([status, scheduledStart])
+}
+
+model Activity {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  type            ActivityType
+  entityType      String
+  entityId        String       @db.ObjectId
+  entityReference String?
+  message         String
+  metadata        Json?
+  actorId         String?      @db.ObjectId
+  actor           User?        @relation("ActivityActor", fields: [actorId], references: [id])
+  createdAt       DateTime     @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+  @@index([type, createdAt])
+}
+
+/// Atomic sequence storage only. Format strings live in ReferenceService.
+model Counter {
+  id  String @id @map("_id")
+  seq Int    @default(0)
+
+  @@map("counters")
+}
+
+model LoginAttempt {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  key           String    @unique
+  attempts      Int       @default(0)
+  windowStart   DateTime
+  lockedUntil   DateTime?
+  lastAttemptAt DateTime
+  updatedAt     DateTime  @updatedAt
+
+  @@index([lockedUntil])
+}
