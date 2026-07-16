@@ -109,6 +109,10 @@ function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, strin
         ["Lift access (from)", formatValue(payload.movingFromLiftAccess)],
         ["Parking / access (from)", formatValue(payload.movingFromParkingNotes)],
         ["Moving to postcode", formatValue(payload.movingToPostcode)],
+        [
+          "Moving to property type",
+          formatValue(payload.movingToPropertyType),
+        ],
         ["Moving to floor", formatValue(payload.movingToFloor)],
         ["Lift access (to)", formatValue(payload.movingToLiftAccess)],
         ["Parking / access (to)", formatValue(payload.movingToParkingNotes)],

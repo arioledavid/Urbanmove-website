@@ -28,9 +28,13 @@ const FLOOR_OPTIONS = [
 ] as const;
 
 const PROPERTY_TYPE_OPTIONS = [
-  "Office",
   "House",
-  "Flat",
+  "Flat / Apartment",
+  "Bungalow",
+  "Maisonette",
+  "Studio",
+  "Office",
+  "Shop / Retail",
   "Storage Unit",
   "Other",
 ] as const;
@@ -79,6 +83,7 @@ type FormState = {
   movingFromLiftAccess: boolean;
   movingFromParkingNotes: string;
   movingToPostcode: string;
+  movingToPropertyType: string;
   movingToFloor: string;
   movingToLiftAccess: boolean;
   movingToParkingNotes: string;
@@ -115,6 +120,7 @@ const INITIAL_FORM_STATE: FormState = {
   movingFromLiftAccess: false,
   movingFromParkingNotes: "",
   movingToPostcode: "",
+  movingToPropertyType: "",
   movingToFloor: "",
   movingToLiftAccess: false,
   movingToParkingNotes: "",
@@ -142,6 +148,7 @@ const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
     "movingFromFloor",
     "movingFromParkingNotes",
     "movingToPostcode",
+    "movingToPropertyType",
     "movingToFloor",
     "movingToParkingNotes",
     "removalItems",
@@ -775,6 +782,27 @@ function RemovalFields({
                   className={inputClasses()}
                   placeholder="e.g. E1 6AN"
                 />
+              </Field>
+
+              <Field label="Property type" htmlFor="movingToPropertyType">
+                <select
+                  id="movingToPropertyType"
+                  value={form.movingToPropertyType}
+                  onChange={(event) => {
+                    updateField("movingToPropertyType", event.target.value);
+                    clearError("movingToPropertyType");
+                  }}
+                  className={cn(inputClasses(), "cursor-pointer")}
+                >
+                  <option value="" className="bg-paper">
+                    Select property type
+                  </option>
+                  {PROPERTY_TYPE_OPTIONS.map((type) => (
+                    <option key={type} value={type} className="bg-paper">
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </Field>
 
               <Field label="Property floor level" htmlFor="movingToFloor">

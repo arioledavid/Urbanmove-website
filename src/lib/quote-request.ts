@@ -19,6 +19,7 @@ export type QuoteRequestPayload = {
   movingFromLiftAccess: boolean;
   movingFromParkingNotes: string;
   movingToPostcode: string;
+  movingToPropertyType: string;
   movingToFloor: string;
   movingToLiftAccess: boolean;
   movingToParkingNotes: string;
@@ -106,6 +107,7 @@ export function validateQuoteRequest(
       movingFromLiftAccess: readBoolean("movingFromLiftAccess"),
       movingFromParkingNotes: readString("movingFromParkingNotes"),
       movingToPostcode: readString("movingToPostcode"),
+      movingToPropertyType: readString("movingToPropertyType"),
       movingToFloor: readString("movingToFloor"),
       movingToLiftAccess: readBoolean("movingToLiftAccess"),
       movingToParkingNotes: readString("movingToParkingNotes"),
