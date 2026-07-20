@@ -1,37 +1,78 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { loginAction, type LoginState } from "@/app/(admin)/admin/login/actions";
+import { useState, type FormEvent } from "react";
+import { signIn } from "next-auth/react";
 
 type LoginFormProps = {
   callbackUrl?: string;
   error?: string;
 };
 
-const initialState: LoginState = {};
+function safeCallbackUrl(callbackUrl?: string): string {
+  if (
+    callbackUrl &&
+    callbackUrl.startsWith("/") &&
+    !callbackUrl.startsWith("//")
+  ) {
+    return callbackUrl === "/" ? "/dashboard" : callbackUrl;
+  }
+  return "/dashboard";
+}
 
 export function LoginForm({ callbackUrl, error }: LoginFormProps) {
-  const [state, formAction, pending] = useActionState(loginAction, initialState);
-
-  useEffect(() => {
-    if (!state.redirectTo) return;
-    window.location.assign(state.redirectTo);
-  }, [state.redirectTo]);
+  const [pending, setPending] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const redirectTo = safeCallbackUrl(callbackUrl);
 
   const displayError =
-    state.error ??
+    formError ??
     (error === "CredentialsSignin"
       ? "Invalid email or password."
       : error
         ? "Unable to sign in."
         : null);
 
-  return (
-    <form action={formAction} className="space-y-4">
-      {callbackUrl ? (
-        <input type="hidden" name="callbackUrl" value={callbackUrl} />
-      ) : null}
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setFormError(null);
 
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (!email || !password) {
+      setFormError("Email and password are required.");
+      setPending(false);
+      return;
+    }
+
+    if (password.length < 12) {
+      setFormError("Invalid email or password.");
+      setPending(false);
+      return;
+    }
+
+    // Client signIn hits /api/auth/callback/credentials so the session cookie
+    // is set reliably (server-action signIn can drop it on Next.js 16).
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: redirectTo,
+    });
+
+    if (result?.error) {
+      setFormError("Invalid email or password.");
+      setPending(false);
+      return;
+    }
+
+    window.location.assign(result?.url ?? redirectTo);
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
           Email
