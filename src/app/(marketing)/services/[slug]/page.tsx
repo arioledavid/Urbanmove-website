@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ServiceDetailPage from "@/app/pages/services/service-detail-page";
+import ServiceDetailPage from "@/app/(marketing)/pages/services/service-detail-page";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
   getServiceBySlug,

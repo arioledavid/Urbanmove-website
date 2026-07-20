@@ -48,5 +48,8 @@ skills-lock.json
 # markdown
 *.md
 !docs/seo-audit.md
+!docs/architecture/
+!docs/architecture/**/*.md
 
 .impeccable/
+/src/generated/prisma
