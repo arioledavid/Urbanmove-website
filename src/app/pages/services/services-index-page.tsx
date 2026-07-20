@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaqSection } from "@/components/faq/faq-section";
 import { NAV_SERVICE_ORDER, SERVICES_DATA } from "@/lib/services-data";
 
 export default function ServicesIndexPage() {
@@ -68,6 +69,8 @@ export default function ServicesIndexPage() {
           })}
         </div>
       </section>
+
+      <FaqSection className="bg-paper" />
     </main>
   );
 }

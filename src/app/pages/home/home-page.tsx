@@ -1,3 +1,4 @@
+import { FaqSection } from "@/components/faq/faq-section";
 import { HeroSection } from "./_components/hero-section";
 // import { FeaturesSection } from "./_components/features-section";
 import { ServicesSection } from "./_components/services-section";
@@ -10,6 +11,7 @@ export default function HomePage() {
       <ReviewsSection />
       {/* <FeaturesSection /> */}
       <ServicesSection />
+      <FaqSection />
     </main>
   );
 }
