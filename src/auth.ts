@@ -11,6 +11,7 @@ import {
 } from "@/lib/services/login-rate-limit-service";
 
 const MIN_PASSWORD_LENGTH = 12;
+const RATE_LIMIT_ENABLED = process.env.NODE_ENV === "production";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -38,13 +39,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const key = loginAttemptKey(clientIp, email);
-        const rate = await loginRateLimitService.check(key);
-        if (!rate.success) return null;
-        if (!rate.data.allowed) return null;
+        if (RATE_LIMIT_ENABLED) {
+          const rate = await loginRateLimitService.check(key);
+          if (!rate.success || !rate.data.allowed) {
+            return null;
+          }
+        }
 
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user?.passwordHash || !user.active) {
-          await loginRateLimitService.recordFailure(key);
+          if (RATE_LIMIT_ENABLED) {
+            await loginRateLimitService.recordFailure(key);
+          }
           if (user?.id) {
             await activityService.log({
               type: "LOGIN_FAILURE",
@@ -52,7 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               entityId: user.id,
               entityReference: user.email,
               message: `Failed login for ${email}`,
-              metadata: { email, reason: "invalid_or_inactive" },
+              metadata: {
+                email,
+                reason: !user.passwordHash ? "missing_password_hash" : "inactive",
+              },
             });
           }
           return null;
@@ -60,7 +69,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const valid = await compare(password, user.passwordHash);
         if (!valid) {
-          await loginRateLimitService.recordFailure(key);
+          if (RATE_LIMIT_ENABLED) {
+            await loginRateLimitService.recordFailure(key);
+          }
           await activityService.log({
             type: "LOGIN_FAILURE",
             entityType: "User",
@@ -72,7 +83,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        await loginRateLimitService.reset(key);
+        if (RATE_LIMIT_ENABLED) {
+          await loginRateLimitService.reset(key);
+        }
         await activityService.log({
           type: "LOGIN_SUCCESS",
           entityType: "User",
