@@ -1,9 +1,16 @@
 export const REMOVAL_ITEM_SUGGESTIONS = [
   // Living room
   "Sofa",
+  "2 seater sofa",
+  "3 seater sofa",
+  "L shaped sofa",
+  "5 seater sofa",
   "Sofa bed",
   "Armchair",
   "Recliner chair",
+  "Reclining arm chair",
+  "Reclining 2 seater",
+  "Reclining 3 seater",
   "Footstool",
   "Coffee table",
   "TV stand",
