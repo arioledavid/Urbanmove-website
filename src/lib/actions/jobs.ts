@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { JobStatus } from "@prisma/client";
 import { auth } from "@/auth";
+import { parseOpsDateTimeLocal } from "@/lib/ops-time";
 import type { Result } from "@/lib/result";
 import { jobService } from "@/lib/services/job-service";
 
@@ -16,8 +17,7 @@ async function requireActorId(): Promise<Result<string>> {
 
 function parseOptionalDateTime(value: FormDataEntryValue | null): Date | null {
   if (typeof value !== "string" || !value.trim()) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : date;
+  return parseOpsDateTimeLocal(value);
 }
 
 export async function updateJobAction(
@@ -53,8 +53,8 @@ export async function updateJobAction(
   revalidatePath(`/jobs/${reference}`);
   revalidatePath("/admin/jobs");
   revalidatePath(`/admin/jobs/${reference}`);
-  revalidatePath("/calendar");
-  revalidatePath("/admin/calendar");
+  revalidatePath("/calendar", "layout");
+  revalidatePath("/admin/calendar", "layout");
   revalidatePath("/dashboard");
   revalidatePath("/admin/dashboard");
   revalidatePath("/enquiries");

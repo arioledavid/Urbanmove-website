@@ -7,6 +7,8 @@ import {
   formatAdminDateTime,
   JOB_STATUS_LABELS,
 } from "@/lib/admin-format";
+import { addDays, dayBounds, dayKey } from "@/lib/calendar-month";
+import { zonedWeekdayMon0 } from "@/lib/ops-time";
 import { activityService } from "@/lib/services/activity-service";
 import { enquiryService } from "@/lib/services/enquiry-service";
 import { jobService } from "@/lib/services/job-service";
@@ -16,28 +18,16 @@ export const metadata = {
 };
 
 function startOfToday(): Date {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function startOfTomorrow(): Date {
-  const d = startOfToday();
-  d.setDate(d.getDate() + 1);
-  return d;
+  return dayBounds(new Date()).start;
 }
 
 function startOfWeek(): Date {
-  const d = startOfToday();
-  const day = (d.getDay() + 6) % 7; // Monday start
-  d.setDate(d.getDate() - day);
-  return d;
+  const today = startOfToday();
+  return addDays(today, -zonedWeekdayMon0(today));
 }
 
 function endOfWeek(): Date {
-  const d = startOfWeek();
-  d.setDate(d.getDate() + 7);
-  return d;
+  return addDays(startOfWeek(), 7);
 }
 
 export default async function DashboardPage() {
@@ -70,7 +60,7 @@ export default async function DashboardPage() {
         description={`Signed in as ${session?.user.email ?? "unknown"}.`}
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
           label="New enquiries"
           value={newStatusCount.success ? String(newStatusCount.data) : "—"}
@@ -85,7 +75,7 @@ export default async function DashboardPage() {
           label="Today's jobs"
           value={String(todayJobs.length)}
           hint={`${formatAdminDateTime(startOfToday()).split(",")[0]}`}
-          href="/calendar"
+          href={`/calendar/${dayKey(startOfToday())}`}
         />
         <StatCard
           label="This week's jobs"
@@ -95,15 +85,15 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid gap-6 sm:mt-8 lg:grid-cols-2">
         <section className="rounded-lg border border-border bg-paper">
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
             <h2 className="text-sm font-semibold text-ink">Today&apos;s jobs</h2>
             <Link
-              href="/calendar"
-              className="text-xs font-medium text-primary hover:underline"
+              href={`/calendar/${dayKey(startOfToday())}`}
+              className="shrink-0 text-xs font-medium text-primary transition-opacity duration-150 active:opacity-70 [@media(hover:hover)_and_(pointer:fine)]:hover:underline"
             >
-              Open calendar
+              Open day
             </Link>
           </div>
           {todayJobs.length === 0 ? (
@@ -113,11 +103,14 @@ export default async function DashboardPage() {
           ) : (
             <ul className="divide-y divide-border">
               {todayJobs.map((job) => (
-                <li key={job.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                <li
+                  key={job.id}
+                  className="flex items-center justify-between gap-3 px-4 py-3.5"
+                >
                   <div className="min-w-0">
                     <Link
                       href={`/jobs/${job.reference}`}
-                      className="text-sm font-medium text-primary hover:underline"
+                      className="text-sm font-medium text-primary transition-opacity duration-150 active:opacity-70 [@media(hover:hover)_and_(pointer:fine)]:hover:underline"
                     >
                       {job.reference}
                     </Link>
@@ -156,12 +149,14 @@ function StatCard({
   return (
     <Link
       href={href}
-      className="rounded-lg border border-border bg-paper p-4 transition-colors hover:border-primary/40"
+      className="rounded-lg border border-border bg-paper p-4 transition-[transform,border-color] duration-150 ease-out active:scale-[0.98] [@media(hover:hover)_and_(pointer:fine)]:hover:border-primary/40"
     >
       <p className="text-xs font-medium tracking-wide text-muted uppercase">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-semibold text-ink">{value}</p>
+      <p className="mt-2 text-2xl font-semibold tabular-nums text-ink">
+        {value}
+      </p>
       <p className="mt-1 text-xs text-subtle">{hint}</p>
     </Link>
   );

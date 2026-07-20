@@ -24,15 +24,15 @@ export function ActivityTimeline({
       {items.map((item) => (
         <li
           key={item.id}
-          className="flex items-start justify-between gap-4 px-4 py-3"
+          className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
         >
           <div className="min-w-0">
-            <p className="text-sm text-ink">{item.message}</p>
+            <p className="text-sm text-ink text-pretty">{item.message}</p>
             <p className="mt-0.5 text-xs text-muted">
               {item.entityReference ?? item.type}
             </p>
           </div>
-          <time className="shrink-0 text-xs text-subtle">
+          <time className="shrink-0 text-xs text-subtle tabular-nums">
             {item.createdAt.toLocaleString("en-GB")}
           </time>
         </li>

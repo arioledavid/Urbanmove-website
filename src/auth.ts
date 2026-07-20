@@ -20,9 +20,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        clientIp: { label: "IP", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const email =
           typeof credentials?.email === "string"
             ? credentials.email.trim().toLowerCase()
@@ -30,9 +29,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password =
           typeof credentials?.password === "string" ? credentials.password : "";
         const clientIp =
-          typeof credentials?.clientIp === "string"
-            ? credentials.clientIp
-            : "unknown";
+          request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+          request?.headers.get("x-real-ip") ??
+          "unknown";
 
         if (!email || !password || password.length < MIN_PASSWORD_LENGTH) {
           return null;

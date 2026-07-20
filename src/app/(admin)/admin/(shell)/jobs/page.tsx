@@ -53,7 +53,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
             id="status"
             name="status"
             defaultValue={status}
-            className="h-10 w-full rounded-md border border-border bg-paper px-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="h-11 w-full rounded-md border border-border bg-paper px-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 sm:h-10"
           >
             {FILTER_STATUSES.map((value) => (
               <option key={value} value={value}>
@@ -64,7 +64,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </div>
         <button
           type="submit"
-          className="inline-flex h-10 items-center justify-center rounded-md bg-ink px-4 text-sm font-medium text-paper hover:bg-secondary-hover"
+          className="inline-flex h-11 items-center justify-center rounded-md bg-ink px-4 text-sm font-medium text-paper transition-transform duration-150 ease-out active:scale-[0.97] sm:h-10 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary-hover"
         >
           Apply
         </button>
@@ -85,7 +85,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
               <h2 className="mb-2 text-sm font-semibold text-ink">
                 Unscheduled ({unscheduled.length})
               </h2>
-              <JobsTable jobs={unscheduled} />
+              <JobsList jobs={unscheduled} />
             </section>
           ) : null}
 
@@ -98,7 +98,7 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
                 No scheduled jobs in this filter.
               </p>
             ) : (
-              <JobsTable jobs={scheduled} />
+              <JobsList jobs={scheduled} />
             )}
           </section>
         </div>
@@ -107,63 +107,108 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
   );
 }
 
-function JobsTable({
-  jobs,
-}: {
-  jobs: Array<{
-    id: string;
-    reference: string;
-    title: string;
-    status: JobStatus;
-    serviceType: keyof typeof SERVICE_TYPE_LABELS;
-    scheduledStart: Date | null;
-    scheduledEnd: Date | null;
-  }>;
-}) {
+type JobRow = {
+  id: string;
+  reference: string;
+  title: string;
+  status: JobStatus;
+  serviceType: keyof typeof SERVICE_TYPE_LABELS;
+  scheduledStart: Date | null;
+  scheduledEnd: Date | null;
+};
+
+function JobsList({ jobs }: { jobs: JobRow[] }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-paper">
-      <table className="min-w-full text-left text-sm">
-        <thead className="border-b border-border bg-surface text-xs tracking-wide text-muted uppercase">
-          <tr>
-            <th className="px-4 py-3 font-medium">Reference</th>
-            <th className="px-4 py-3 font-medium">Title</th>
-            <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium">Service</th>
-            <th className="px-4 py-3 font-medium">Start</th>
-            <th className="px-4 py-3 font-medium">End</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {jobs.map((job) => (
-            <tr key={job.id} className="hover:bg-surface/80">
-              <td className="px-4 py-3">
-                <Link
-                  href={`/jobs/${job.reference}`}
-                  className="font-medium text-primary hover:underline"
-                >
-                  {job.reference}
-                </Link>
-              </td>
-              <td className="px-4 py-3 text-ink">{job.title}</td>
-              <td className="px-4 py-3">
+    <>
+      <ul className="space-y-3 md:hidden">
+        {jobs.map((job) => (
+          <li key={job.id}>
+            <Link
+              href={`/jobs/${job.reference}`}
+              className="block rounded-lg border border-border bg-paper p-4 transition-[transform,border-color] duration-150 ease-out active:scale-[0.99] [@media(hover:hover)_and_(pointer:fine)]:hover:border-primary/40"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-primary">{job.reference}</p>
+                  <p className="mt-0.5 truncate text-sm text-ink">{job.title}</p>
+                </div>
                 <StatusBadge
                   label={JOB_STATUS_LABELS[job.status]}
                   tone={jobStatusTone(job.status)}
                 />
-              </td>
-              <td className="px-4 py-3 text-muted">
-                {SERVICE_TYPE_LABELS[job.serviceType]}
-              </td>
-              <td className="px-4 py-3 text-muted">
-                {formatAdminDateTime(job.scheduledStart)}
-              </td>
-              <td className="px-4 py-3 text-muted">
-                {formatAdminDateTime(job.scheduledEnd)}
-              </td>
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+                <div>
+                  <dt className="text-muted">Service</dt>
+                  <dd className="text-ink">
+                    {SERVICE_TYPE_LABELS[job.serviceType]}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted">Start</dt>
+                  <dd className="text-ink">
+                    {formatAdminDateTime(job.scheduledStart)}
+                  </dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-muted">End</dt>
+                  <dd className="text-ink">
+                    {formatAdminDateTime(job.scheduledEnd)}
+                  </dd>
+                </div>
+              </dl>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-lg border border-border bg-paper md:block">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b border-border bg-surface text-xs tracking-wide text-muted uppercase">
+            <tr>
+              <th className="px-4 py-3 font-medium">Reference</th>
+              <th className="px-4 py-3 font-medium">Title</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Service</th>
+              <th className="px-4 py-3 font-medium">Start</th>
+              <th className="px-4 py-3 font-medium">End</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {jobs.map((job) => (
+              <tr
+                key={job.id}
+                className="[@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface/80"
+              >
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/jobs/${job.reference}`}
+                    className="font-medium text-primary [@media(hover:hover)_and_(pointer:fine)]:hover:underline"
+                  >
+                    {job.reference}
+                  </Link>
+                </td>
+                <td className="px-4 py-3 text-ink">{job.title}</td>
+                <td className="px-4 py-3">
+                  <StatusBadge
+                    label={JOB_STATUS_LABELS[job.status]}
+                    tone={jobStatusTone(job.status)}
+                  />
+                </td>
+                <td className="px-4 py-3 text-muted">
+                  {SERVICE_TYPE_LABELS[job.serviceType]}
+                </td>
+                <td className="px-4 py-3 text-muted">
+                  {formatAdminDateTime(job.scheduledStart)}
+                </td>
+                <td className="px-4 py-3 text-muted">
+                  {formatAdminDateTime(job.scheduledEnd)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

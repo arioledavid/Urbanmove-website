@@ -1,4 +1,8 @@
 import type { JobStatus, ServiceType } from "@prisma/client";
+import {
+  OPS_TIMEZONE,
+  toOpsDateTimeLocalValue,
+} from "@/lib/ops-time";
 
 export const SERVICE_TYPE_LABELS: Record<ServiceType, string> = {
   REMOVAL: "Removal",
@@ -20,6 +24,7 @@ export function formatAdminDate(value: Date | string | null | undefined): string
   const date = typeof value === "string" ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return "—";
   return date.toLocaleDateString("en-GB", {
+    timeZone: OPS_TIMEZONE,
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -33,6 +38,7 @@ export function formatAdminDateTime(
   const date = typeof value === "string" ? new Date(value) : value;
   if (Number.isNaN(date.getTime())) return "—";
   return date.toLocaleString("en-GB", {
+    timeZone: OPS_TIMEZONE,
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -41,13 +47,9 @@ export function formatAdminDateTime(
   });
 }
 
-/** datetime-local input value in local timezone */
+/** datetime-local input value in the ops timezone (Europe/London). */
 export function toDateTimeLocalValue(
   value: Date | string | null | undefined,
 ): string {
-  if (!value) return "";
-  const date = typeof value === "string" ? new Date(value) : value;
-  if (Number.isNaN(date.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  return toOpsDateTimeLocalValue(value);
 }

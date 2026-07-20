@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { IconX } from "@tabler/icons-react";
 import { Logo } from "@/components/brand/brand-logo";
 import {
   ADMIN_NAV,
@@ -36,7 +37,8 @@ export function AdminSidebar({
     <>
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-ink/40 transition-opacity lg:hidden",
+          "fixed inset-0 z-40 bg-ink/40 lg:hidden",
+          "transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
           mobileOpen ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         aria-hidden={!mobileOpen}
@@ -44,21 +46,41 @@ export function AdminSidebar({
       />
 
       <aside
+        id="admin-sidebar"
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-paper transition-transform lg:static lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex w-[min(18rem,calc(100vw-3rem))] flex-col border-r border-border bg-paper",
+          "pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]",
+          "transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
+          "lg:static lg:w-64 lg:translate-x-0 lg:pt-0 lg:pb-0 lg:pl-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
+        aria-label="Admin navigation"
+        {...(mobileOpen
+          ? { role: "dialog", "aria-modal": true as const }
+          : {})}
       >
-        <div className="flex h-16 items-center border-b border-border px-4">
-          <Link href="/dashboard" onClick={onClose} className="flex items-center gap-2">
-            <Logo className="h-10 w-auto" />
+        <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4 sm:h-16">
+          <Link
+            href="/dashboard"
+            onClick={onClose}
+            className="flex min-w-0 items-center gap-2 active:scale-[0.97] active:transition-transform active:duration-150"
+          >
+            <Logo className="h-9 w-auto sm:h-10" />
             <span className="text-sm font-semibold tracking-tight text-ink">
               Admin
             </span>
           </Link>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink transition-transform duration-150 ease-out active:scale-[0.97] lg:hidden [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface"
+            aria-label="Close navigation"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
           {ADMIN_NAV_SECTIONS.map((section) => {
             const items = ADMIN_NAV.filter((item) => item.section === section);
             if (items.length === 0) return null;
@@ -78,10 +100,10 @@ export function AdminSidebar({
                           href={item.href}
                           onClick={onClose}
                           className={cn(
-                            "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors",
+                            "flex min-h-11 items-center gap-2.5 rounded-md px-2.5 py-2.5 text-sm transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.98]",
                             active
                               ? "bg-surface font-medium text-ink shadow-[inset_3px_0_0_0_var(--primary)]"
-                              : "text-muted hover:bg-surface hover:text-ink",
+                              : "text-muted [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface [@media(hover:hover)_and_(pointer:fine)]:hover:text-ink",
                             item.soon && !active ? "opacity-70" : null,
                           )}
                         >

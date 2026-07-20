@@ -58,8 +58,8 @@ export async function convertEnquiryToJobAction(
   revalidatePath(`/jobs/${result.data.reference}`);
   revalidatePath("/admin/jobs");
   revalidatePath(`/admin/jobs/${result.data.reference}`);
-  revalidatePath("/calendar");
-  revalidatePath("/admin/calendar");
+  revalidatePath("/calendar", "layout");
+  revalidatePath("/admin/calendar", "layout");
 
   return { success: true, data: { jobReference: result.data.reference } };
 }

@@ -1,5 +1,7 @@
 import type { Job, JobStatus, Prisma } from "@prisma/client";
+import { dayBounds } from "@/lib/calendar-month";
 import { prisma } from "@/lib/db/prisma";
+import { isJobTransitionAllowed } from "@/lib/job-workflow";
 import { err, ok, type Result } from "@/lib/result";
 import { activityService } from "@/lib/services/activity-service";
 import { referenceService } from "@/lib/services/reference-service";
@@ -78,21 +80,25 @@ export const jobService = {
       const referenceResult = await referenceService.next("job");
       if (!referenceResult.success) return referenceResult;
 
-      const job = await prisma.job.create({
-        data: {
-          reference: referenceResult.data,
-          title: `${enquiry.serviceType} — ${enquiry.contactName}`,
-          serviceType: enquiry.serviceType,
-          enquiryId: enquiry.id,
-          addressFrom: enquiry.fromAddress,
-          addressTo: enquiry.toAddress,
-          status: "DRAFT",
-        },
-      });
+      const job = await prisma.$transaction(async (tx) => {
+        const created = await tx.job.create({
+          data: {
+            reference: referenceResult.data,
+            title: `${enquiry.serviceType} — ${enquiry.contactName}`,
+            serviceType: enquiry.serviceType,
+            enquiryId: enquiry.id,
+            addressFrom: enquiry.fromAddress,
+            addressTo: enquiry.toAddress,
+            status: "DRAFT",
+          },
+        });
 
-      await prisma.enquiry.update({
-        where: { id: enquiry.id },
-        data: { status: "JOB_CREATED" },
+        await tx.enquiry.update({
+          where: { id: enquiry.id },
+          data: { status: "JOB_CREATED" },
+        });
+
+        return created;
       });
 
       await activityService.log({
@@ -131,7 +137,7 @@ export const jobService = {
 
       const rows = await prisma.job.findMany({
         where,
-        orderBy: [{ scheduledStart: "asc" }, { createdAt: "desc" }],
+        orderBy: { createdAt: "desc" },
         take: input.take ?? 100,
         include: {
           enquiry: {
@@ -145,10 +151,7 @@ export const jobService = {
         },
       });
 
-      // Unscheduled first for dispatcher attention, then by scheduledStart
-      const unscheduled = rows.filter((j) => !j.scheduledStart);
-      const scheduled = rows.filter((j) => j.scheduledStart);
-      return ok([...unscheduled, ...scheduled]);
+      return ok(rows);
     } catch (error) {
       console.error("jobService.list failed:", error);
       return err("Unable to load jobs.");
@@ -239,6 +242,16 @@ export const jobService = {
 
       if (nextStart && nextEnd && nextStart >= nextEnd) {
         return err("Scheduled end must be after scheduled start.");
+      }
+
+      if (
+        input.status !== undefined &&
+        input.status !== existing.status &&
+        !isJobTransitionAllowed(existing.status, input.status)
+      ) {
+        return err(
+          `Cannot change status from ${JOB_STATUS_LABELS[existing.status]} to ${JOB_STATUS_LABELS[input.status]}.`,
+        );
       }
 
       const overlapWarnings: string[] = [];
@@ -400,10 +413,7 @@ export const jobService = {
   },
 
   async listForDay(day: Date): Promise<Result<JobWithEnquiry[]>> {
-    const start = new Date(day);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
+    const { start, end } = dayBounds(day);
     return this.listInRange(start, end);
   },
 

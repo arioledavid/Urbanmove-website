@@ -12,6 +12,27 @@ export const ENQUIRY_MAIN_PATH: EnquiryStatus[] = [
   "COMPLETED",
 ];
 
+/**
+ * Statuses after Convert to Job. Kept on the enquiry record for reporting,
+ * but hidden from the enquiries list (work continues under Jobs).
+ */
+export const ENQUIRY_CONVERTED_STATUSES: EnquiryStatus[] = [
+  "JOB_CREATED",
+  "SCHEDULED",
+  "COMPLETED",
+];
+
+/** Statuses still worked in the Enquiries inbox. */
+export const ENQUIRY_LIST_STATUSES: EnquiryStatus[] = [
+  "NEW",
+  "CONTACTED",
+  "QUOTE_SENT",
+  "ACCEPTED",
+  "DEPOSIT_PAID",
+  "LOST",
+  "SPAM",
+];
+
 export const ENQUIRY_STATUS_LABELS: Record<EnquiryStatus, string> = {
   NEW: "New",
   CONTACTED: "Contacted",

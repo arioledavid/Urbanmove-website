@@ -62,7 +62,7 @@ export function EnquiryWorkflow({
           setError(result.error);
           return;
         }
-        router.push(`/jobs/${result.data.jobReference}`);
+        router.push("/jobs");
         router.refresh();
       } catch (err) {
         console.error("convertEnquiryToJobAction failed:", err);

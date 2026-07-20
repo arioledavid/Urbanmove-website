@@ -1,5 +1,7 @@
 import type { Enquiry, EnquiryStatus, Prisma, ServiceType } from "@prisma/client";
 import {
+  ENQUIRY_CONVERTED_STATUSES,
+  ENQUIRY_LIST_STATUSES,
   ENQUIRY_STATUS_LABELS,
   isEnquiryTransitionAllowed,
 } from "@/lib/enquiry-workflow";
@@ -90,8 +92,17 @@ export const enquiryService = {
       const q = input.q?.trim();
       const where: Prisma.EnquiryWhereInput = {};
 
+      // Converted enquiries stay in the DB for reports/counts, but leave the
+      // Enquiries inbox — work continues under Jobs.
       if (input.status && input.status !== "ALL") {
+        if (
+          !(ENQUIRY_LIST_STATUSES as EnquiryStatus[]).includes(input.status)
+        ) {
+          return ok([]);
+        }
         where.status = input.status;
+      } else {
+        where.status = { notIn: ENQUIRY_CONVERTED_STATUSES };
       }
 
       if (q) {
@@ -108,7 +119,7 @@ export const enquiryService = {
 
       const rows = await prisma.enquiry.findMany({
         where,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
         take: input.take ?? 100,
         include: {
           job: { select: { id: true, reference: true, status: true } },
