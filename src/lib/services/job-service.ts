@@ -2,6 +2,10 @@ import type { Job, JobStatus, Prisma } from "@prisma/client";
 import { dayBounds } from "@/lib/calendar-month";
 import { prisma } from "@/lib/db/prisma";
 import { isJobTransitionAllowed } from "@/lib/job-workflow";
+import {
+  isPastOpsDateTime,
+  moveDateToScheduledStart,
+} from "@/lib/ops-time";
 import { err, ok, type Result } from "@/lib/result";
 import { activityService } from "@/lib/services/activity-service";
 import { referenceService } from "@/lib/services/reference-service";
@@ -12,6 +16,7 @@ export type JobWithEnquiry = Job & {
     reference: string;
     contactName: string;
     status: string;
+    moveDate: Date | null;
   };
 };
 
@@ -80,6 +85,10 @@ export const jobService = {
       const referenceResult = await referenceService.next("job");
       if (!referenceResult.success) return referenceResult;
 
+      const scheduledStart = enquiry.moveDate
+        ? moveDateToScheduledStart(enquiry.moveDate, enquiry.serviceType)
+        : null;
+
       const job = await prisma.$transaction(async (tx) => {
         const created = await tx.job.create({
           data: {
@@ -89,6 +98,7 @@ export const jobService = {
             enquiryId: enquiry.id,
             addressFrom: enquiry.fromAddress,
             addressTo: enquiry.toAddress,
+            scheduledStart,
             status: "DRAFT",
           },
         });
@@ -146,6 +156,7 @@ export const jobService = {
               reference: true,
               contactName: true,
               status: true,
+              moveDate: true,
             },
           },
         },
@@ -169,6 +180,7 @@ export const jobService = {
               reference: true,
               contactName: true,
               status: true,
+              moveDate: true,
             },
           },
         },
@@ -242,6 +254,17 @@ export const jobService = {
 
       if (nextStart && nextEnd && nextStart >= nextEnd) {
         return err("Scheduled end must be after scheduled start.");
+      }
+
+      const nextStatus =
+        input.status !== undefined ? input.status : existing.status;
+
+      if (
+        (nextStatus === "SCHEDULED" || nextStatus === "IN_PROGRESS") &&
+        nextStart &&
+        isPastOpsDateTime(nextStart)
+      ) {
+        return err("Scheduled start cannot be in the past.");
       }
 
       if (
@@ -400,6 +423,7 @@ export const jobService = {
               reference: true,
               contactName: true,
               status: true,
+              moveDate: true,
             },
           },
         },

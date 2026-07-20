@@ -10,6 +10,10 @@ import {
   toDateTimeLocalValue,
 } from "@/lib/admin-format";
 import { getAllowedJobTransitions } from "@/lib/job-workflow";
+import {
+  isPastOpsDateTime,
+  parseOpsDateTimeLocal,
+} from "@/lib/ops-time";
 
 type JobEditFormProps = {
   reference: string;
@@ -62,6 +66,20 @@ export function JobEditForm({
   function onSubmit(formData: FormData) {
     setError(null);
     setWarnings([]);
+
+    const status = String(formData.get("status") ?? "");
+    const startValue = String(formData.get("scheduledStart") ?? "");
+    const scheduledStartDate = parseOpsDateTimeLocal(startValue);
+
+    if (
+      (status === "SCHEDULED" || status === "IN_PROGRESS") &&
+      scheduledStartDate &&
+      isPastOpsDateTime(scheduledStartDate)
+    ) {
+      setError("Scheduled start cannot be in the past.");
+      return;
+    }
+
     startTransition(async () => {
       const result = await updateJobAction(reference, formData);
       if (!result.success) {

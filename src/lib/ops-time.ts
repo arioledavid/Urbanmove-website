@@ -105,6 +105,41 @@ export function toOpsDateTimeLocalValue(
   return `${parts.year}-${pad(parts.month)}-${pad(parts.day)}T${pad(parts.hour)}:${pad(parts.minute)}`;
 }
 
+/** Default morning slot when only a move date (no time) is known. */
+export const DEFAULT_SCHEDULE_HOUR = 9;
+export const DEFAULT_SCHEDULE_MINUTE = 0;
+
+export function isPastOpsDateTime(date: Date): boolean {
+  return date.getTime() < Date.now();
+}
+
+/**
+ * Turn an enquiry move date into a job scheduled start.
+ * Courier keeps the requested time; other services default to 09:00 ops time.
+ */
+export function moveDateToScheduledStart(
+  moveDate: Date,
+  serviceType: "COURIER" | "REMOVAL" | "CARGO" | "OTHER",
+): Date {
+  const parts = getZonedParts(moveDate);
+  if (serviceType === "COURIER") {
+    return zonedLocalToUtc(
+      parts.year,
+      parts.month,
+      parts.day,
+      parts.hour,
+      parts.minute,
+    );
+  }
+  return zonedLocalToUtc(
+    parts.year,
+    parts.month,
+    parts.day,
+    DEFAULT_SCHEDULE_HOUR,
+    DEFAULT_SCHEDULE_MINUTE,
+  );
+}
+
 /** Parse `YYYY-MM-DDTHH:mm` as an ops-timezone wall clock → UTC Instant. */
 export function parseOpsDateTimeLocal(value: string): Date | null {
   const trimmed = value.trim();

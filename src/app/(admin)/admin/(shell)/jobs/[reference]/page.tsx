@@ -8,6 +8,7 @@ import {
   JOB_STATUS_LABELS,
   SERVICE_TYPE_LABELS,
 } from "@/lib/admin-format";
+import { moveDateToScheduledStart } from "@/lib/ops-time";
 import { activityService } from "@/lib/services/activity-service";
 import { jobService } from "@/lib/services/job-service";
 
@@ -31,6 +32,11 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const job = result.data;
   const activityResult = await activityService.listForEntity("Job", job.id);
   const activity = activityResult.success ? activityResult.data : [];
+  const scheduledStart =
+    job.scheduledStart ??
+    (job.enquiry.moveDate
+      ? moveDateToScheduledStart(job.enquiry.moveDate, job.serviceType)
+      : null);
 
   return (
     <div>
@@ -68,7 +74,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           reference={job.reference}
           title={job.title}
           status={job.status}
-          scheduledStart={job.scheduledStart}
+          scheduledStart={scheduledStart}
           scheduledEnd={job.scheduledEnd}
           addressFrom={job.addressFrom}
           addressTo={job.addressTo}
