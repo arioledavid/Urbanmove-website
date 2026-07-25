@@ -125,6 +125,14 @@ export function Footer() {
             </h2>
             <ul className="mt-4 space-y-3 text-sm text-muted">
               <li>
+                <address className="not-italic leading-relaxed">
+                  {BUSINESS.address.streetAddress}
+                  <br />
+                  {BUSINESS.address.addressLocality}{" "}
+                  {BUSINESS.address.postalCode}
+                </address>
+              </li>
+              <li>
                 <a
                   href={`tel:${BUSINESS.telephone}`}
                   className="transition-colors duration-200 hover:text-ink"

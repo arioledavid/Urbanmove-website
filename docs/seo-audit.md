@@ -65,7 +65,7 @@ All name, address, and phone values flow from `BUSINESS` in `src/lib/seo.ts`:
 | Phone (E.164) | `+447776446254` | JSON-LD, `tel:` hrefs |
 | Phone (display) | `+44 7776 446254` | Footer, legal page, quote emails, via `formatTelephoneDisplay()` |
 | Email | info@urbanmovelogistics.co.uk | Footer, JSON-LD, legal |
-| Address | Flat B, 64 Menzies Road, Aberdeen AB11 9BH | JSON-LD |
+| Address | Enterprise Centre, Aberdeen Energy Park, Exploration Drive, Bridge of Don, Aberdeen AB23 8GX | JSON-LD + footer |
 
 JSON-LD `sameAs` includes Google Business Profile, Instagram, and TikTok URLs.
 
