@@ -1,16 +1,17 @@
-import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import type { Role } from "@prisma/client";
 import { authConfig } from "@/auth.config";
 import { prisma } from "@/lib/db/prisma";
+import {
+  MIN_PASSWORD_LENGTH,
+  verifyPassword,
+} from "@/lib/password";
 import { activityService } from "@/lib/services/activity-service";
 import {
   loginAttemptKey,
   loginRateLimitService,
 } from "@/lib/services/login-rate-limit-service";
-
-const MIN_PASSWORD_LENGTH = 12;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -58,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const valid = await compare(password, user.passwordHash);
+        const valid = await verifyPassword(password, user.passwordHash);
         if (!valid) {
           await loginRateLimitService.recordFailure(key);
           await activityService.log({
