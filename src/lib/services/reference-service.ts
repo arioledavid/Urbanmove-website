@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { err, ok, type Result } from "@/lib/result";
 
-export type ReferenceKind = "enquiry" | "job" | "customer";
+export type ReferenceKind = "job" | "customer";
 
 function utcDateKey(date = new Date()): string {
   const y = date.getUTCFullYear();
@@ -19,8 +19,7 @@ function formatReference(kind: ReferenceKind, seq: number, date = new Date()): s
   if (kind === "customer") {
     return `CUS-${String(seq).padStart(5, "0")}`;
   }
-  const prefix = kind === "enquiry" ? "ENQ" : "JOB";
-  return `${prefix}-${utcDateKey(date)}-${String(seq).padStart(4, "0")}`;
+  return `JOB-${utcDateKey(date)}-${String(seq).padStart(4, "0")}`;
 }
 
 type FindAndModifyResult = {

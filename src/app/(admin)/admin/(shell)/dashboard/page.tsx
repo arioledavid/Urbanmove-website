@@ -10,7 +10,6 @@ import {
 import { addDays, dayBounds, dayKey } from "@/lib/calendar-month";
 import { zonedWeekdayMon0 } from "@/lib/ops-time";
 import { activityService } from "@/lib/services/activity-service";
-import { enquiryService } from "@/lib/services/enquiry-service";
 import { jobService } from "@/lib/services/job-service";
 
 export const metadata = {
@@ -33,18 +32,13 @@ function endOfWeek(): Date {
 export default async function DashboardPage() {
   const session = await auth();
 
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
   const [
-    newStatusCount,
-    recentEnquiriesCount,
+    draftJobsCount,
     todayJobsResult,
     weekJobsCount,
     activityResult,
   ] = await Promise.all([
-    enquiryService.countByStatus("NEW"),
-    enquiryService.countCreatedSince(sevenDaysAgo),
+    jobService.countDraft(),
     jobService.listForDay(startOfToday()),
     jobService.countStartingBetween(startOfWeek(), endOfWeek()),
     activityService.listRecent(8),
@@ -62,14 +56,10 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <StatCard
-          label="New enquiries"
-          value={newStatusCount.success ? String(newStatusCount.data) : "—"}
-          hint={
-            recentEnquiriesCount.success
-              ? `${recentEnquiriesCount.data} created in last 7 days`
-              : "Status = New"
-          }
-          href="/enquiries?status=NEW"
+          label="Draft jobs"
+          value={draftJobsCount.success ? String(draftJobsCount.data) : "—"}
+          hint="Awaiting schedule status"
+          href="/jobs?status=DRAFT"
         />
         <StatCard
           label="Today's jobs"

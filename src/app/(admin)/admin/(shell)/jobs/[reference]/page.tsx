@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ActivityTimeline } from "@/components/admin/activity-timeline";
+import { JobDeleteButton } from "@/components/admin/job-delete-button";
 import { JobEditForm } from "@/components/admin/job-edit-form";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge, jobStatusTone } from "@/components/admin/status-badge";
@@ -8,7 +9,7 @@ import {
   JOB_STATUS_LABELS,
   SERVICE_TYPE_LABELS,
 } from "@/lib/admin-format";
-import { moveDateToScheduledStart } from "@/lib/ops-time";
+import { canDeleteJob } from "@/lib/job-workflow";
 import { activityService } from "@/lib/services/activity-service";
 import { jobService } from "@/lib/services/job-service";
 
@@ -32,11 +33,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
   const job = result.data;
   const activityResult = await activityService.listForEntity("Job", job.id);
   const activity = activityResult.success ? activityResult.data : [];
-  const scheduledStart =
-    job.scheduledStart ??
-    (job.enquiry.moveDate
-      ? moveDateToScheduledStart(job.enquiry.moveDate, job.serviceType)
-      : null);
 
   return (
     <div>
@@ -44,12 +40,17 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         title={job.reference}
         description={job.title}
         actions={
-          <Link
-            href="/jobs"
-            className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium text-ink hover:bg-surface"
-          >
-            Back to list
-          </Link>
+          <>
+            <Link
+              href="/jobs"
+              className="inline-flex h-9 items-center rounded-md border border-border px-3 text-sm font-medium text-ink hover:bg-surface"
+            >
+              Back to list
+            </Link>
+            {canDeleteJob(job.status) ? (
+              <JobDeleteButton reference={job.reference} />
+            ) : null}
+          </>
         }
       />
 
@@ -61,12 +62,7 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
         <span className="text-sm text-muted">
           {SERVICE_TYPE_LABELS[job.serviceType]}
         </span>
-        <Link
-          href={`/enquiries/${job.enquiry.reference}`}
-          className="text-sm font-medium text-primary hover:underline"
-        >
-          Source enquiry {job.enquiry.reference}
-        </Link>
+        <span className="text-sm text-muted">{job.contactName}</span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
@@ -74,7 +70,10 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
           reference={job.reference}
           title={job.title}
           status={job.status}
-          scheduledStart={scheduledStart}
+          contactName={job.contactName}
+          contactEmail={job.contactEmail}
+          contactPhone={job.contactPhone}
+          scheduledStart={job.scheduledStart}
           scheduledEnd={job.scheduledEnd}
           addressFrom={job.addressFrom}
           addressTo={job.addressTo}

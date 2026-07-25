@@ -9,7 +9,7 @@ export const JOB_MAIN_PATH: JobStatus[] = [
 ];
 
 /**
- * Transition rules (aligned with enquiry one-step-forward):
+ * Transition rules (one-step-forward on the main path):
  * - Forward: only the next step on the main path.
  * - Side exit: CANCELLED from any status before COMPLETED.
  * - Reopen: CANCELLED → DRAFT only (no other backward moves).
@@ -43,4 +43,9 @@ export function isJobTransitionAllowed(
   to: JobStatus,
 ): boolean {
   return getAllowedJobTransitions(from).includes(to);
+}
+
+/** Finished jobs can be removed from the system. */
+export function canDeleteJob(status: JobStatus): boolean {
+  return status === "COMPLETED";
 }

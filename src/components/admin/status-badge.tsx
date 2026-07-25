@@ -35,31 +35,6 @@ export function StatusBadge({
   );
 }
 
-export function enquiryStatusTone(
-  status: string,
-): Tone {
-  switch (status) {
-    case "NEW":
-      return "accent";
-    case "CONTACTED":
-    case "QUOTE_SENT":
-      return "info";
-    case "ACCEPTED":
-    case "DEPOSIT_PAID":
-      return "warning";
-    case "JOB_CREATED":
-    case "SCHEDULED":
-      return "info";
-    case "COMPLETED":
-      return "success";
-    case "LOST":
-    case "SPAM":
-      return "danger";
-    default:
-      return "neutral";
-  }
-}
-
 export function jobStatusTone(status: string): Tone {
   switch (status) {
     case "DRAFT":

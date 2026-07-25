@@ -39,6 +39,14 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
       <PageHeader
         title="Jobs"
         description="Scheduled work. Unscheduled jobs need dispatcher attention — set start/end to appear on the calendar."
+        actions={
+          <Link
+            href="/jobs/new"
+            className="inline-flex h-9 items-center justify-center rounded-md bg-ink px-3 text-sm font-medium text-paper transition-transform duration-150 ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary-hover"
+          >
+            Create job
+          </Link>
+        }
       />
 
       <form className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -76,7 +84,11 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </p>
       ) : jobs.length === 0 ? (
         <div className="rounded-lg border border-border bg-paper px-4 py-10 text-sm text-muted">
-          No jobs yet. Convert a Deposit Paid enquiry to create the first job.
+          No jobs yet.{" "}
+          <Link href="/jobs/new" className="font-medium text-primary hover:underline">
+            Create a job
+          </Link>{" "}
+          from a converted email lead.
         </div>
       ) : (
         <div className="space-y-6">
@@ -111,6 +123,7 @@ type JobRow = {
   id: string;
   reference: string;
   title: string;
+  contactName: string;
   status: JobStatus;
   serviceType: keyof typeof SERVICE_TYPE_LABELS;
   scheduledStart: Date | null;
@@ -131,6 +144,7 @@ function JobsList({ jobs }: { jobs: JobRow[] }) {
                 <div className="min-w-0">
                   <p className="font-medium text-primary">{job.reference}</p>
                   <p className="mt-0.5 truncate text-sm text-ink">{job.title}</p>
+                  <p className="mt-0.5 text-xs text-muted">{job.contactName}</p>
                 </div>
                 <StatusBadge
                   label={JOB_STATUS_LABELS[job.status]}
@@ -168,6 +182,7 @@ function JobsList({ jobs }: { jobs: JobRow[] }) {
             <tr>
               <th className="px-4 py-3 font-medium">Reference</th>
               <th className="px-4 py-3 font-medium">Title</th>
+              <th className="px-4 py-3 font-medium">Contact</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Service</th>
               <th className="px-4 py-3 font-medium">Start</th>
@@ -189,6 +204,7 @@ function JobsList({ jobs }: { jobs: JobRow[] }) {
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-ink">{job.title}</td>
+                <td className="px-4 py-3 text-muted">{job.contactName}</td>
                 <td className="px-4 py-3">
                   <StatusBadge
                     label={JOB_STATUS_LABELS[job.status]}

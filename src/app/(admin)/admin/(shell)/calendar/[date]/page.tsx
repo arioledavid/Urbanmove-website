@@ -104,7 +104,7 @@ export default async function CalendarDayPage({ params }: CalendarDayPageProps) 
                         {job.title}
                       </p>
                       <p className="mt-0.5 text-xs text-muted">
-                        {job.enquiry.contactName}
+                        {job.contactName}
                       </p>
                     </div>
                     <StatusBadge
@@ -166,7 +166,7 @@ export default async function CalendarDayPage({ params }: CalendarDayPageProps) 
                     </td>
                     <td className="px-4 py-3 text-ink">{job.title}</td>
                     <td className="px-4 py-3 text-muted">
-                      {job.enquiry.contactName}
+                      {job.contactName}
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge

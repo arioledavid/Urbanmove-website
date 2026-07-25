@@ -12,19 +12,6 @@ enum Role {
   STAFF
 }
 
-enum EnquiryStatus {
-  NEW
-  CONTACTED
-  QUOTE_SENT
-  ACCEPTED
-  DEPOSIT_PAID
-  JOB_CREATED
-  SCHEDULED
-  COMPLETED
-  LOST
-  SPAM
-}
-
 enum ServiceType {
   REMOVAL
   COURIER
@@ -65,51 +52,19 @@ model User {
   activities Activity[] @relation("ActivityActor")
 }
 
-model Enquiry {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  reference   String        @unique
-  status      EnquiryStatus @default(NEW)
-  serviceType ServiceType
-
-  contactName  String
-  contactEmail String
-  contactPhone String
-
-  fromAddress  String?
-  toAddress    String?
-  postcodeFrom String?
-  postcodeTo   String?
-  moveDate     DateTime?
-  propertyType String?
-
-  payload Json
-  source  String @default("website")
-
-  assignedToId String? @db.ObjectId
-
-  job Job?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([status, createdAt])
-  @@index([contactEmail])
-  @@index([postcodeFrom, postcodeTo])
-  @@index([moveDate])
-}
-
 model Job {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  reference   String     @unique
-  status      JobStatus  @default(DRAFT)
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  reference   String      @unique
+  status      JobStatus   @default(DRAFT)
   title       String
   serviceType ServiceType
 
+  contactName  String
+  contactEmail String?
+  contactPhone String?
+
   scheduledStart DateTime?
   scheduledEnd   DateTime?
-
-  enquiryId String  @unique @db.ObjectId
-  enquiry   Enquiry @relation(fields: [enquiryId], references: [id])
 
   addressFrom String?
   addressTo   String?
@@ -124,6 +79,7 @@ model Job {
 
   @@index([scheduledStart, scheduledEnd])
   @@index([status, scheduledStart])
+  @@index([contactEmail])
 }
 
 model Activity {
