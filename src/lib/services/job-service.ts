@@ -1,28 +1,27 @@
-import type { Job, JobStatus, Prisma } from "@prisma/client";
+import type { Job, JobStatus, Prisma, ServiceType } from "@prisma/client";
 import { dayBounds } from "@/lib/calendar-month";
 import { prisma } from "@/lib/db/prisma";
-import { isJobTransitionAllowed } from "@/lib/job-workflow";
-import {
-  isPastOpsDateTime,
-  moveDateToScheduledStart,
-} from "@/lib/ops-time";
+import { canDeleteJob, isJobTransitionAllowed } from "@/lib/job-workflow";
+import { isPastOpsDateTime } from "@/lib/ops-time";
 import { err, ok, type Result } from "@/lib/result";
 import { activityService } from "@/lib/services/activity-service";
 import { referenceService } from "@/lib/services/reference-service";
 
-export type JobWithEnquiry = Job & {
-  enquiry: {
-    id: string;
-    reference: string;
-    contactName: string;
-    status: string;
-    moveDate: Date | null;
-  };
-};
-
 export type ListJobsInput = {
   status?: JobStatus | "ALL";
   take?: number;
+};
+
+export type CreateJobInput = {
+  contactName: string;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  serviceType: ServiceType;
+  title?: string | null;
+  addressFrom?: string | null;
+  addressTo?: string | null;
+  notes?: string | null;
+  scheduledStart: Date;
 };
 
 export type UpdateJobInput = {
@@ -33,6 +32,9 @@ export type UpdateJobInput = {
   addressTo?: string | null;
   notes?: string | null;
   title?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
 };
 
 const JOB_STATUS_LABELS: Record<JobStatus, string> = {
@@ -42,6 +44,8 @@ const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   COMPLETED: "Completed",
   CANCELLED: "Cancelled",
 };
+
+const SERVICE_TYPES: ServiceType[] = ["REMOVAL", "COURIER", "CARGO", "OTHER"];
 
 function rangesOverlap(
   aStart: Date,
@@ -53,62 +57,51 @@ function rangesOverlap(
 }
 
 /**
- * Jobs created from enquiries default to DRAFT.
- * Scheduling (scheduledStart/End) is done on the job detail page; setting a
- * start date can move status DRAFT → SCHEDULED when staff choose that status.
+ * Jobs are created manually (from converted email leads) as DRAFT.
+ * Name, service, and scheduled start are required at creation; other fields are optional.
  */
 export const jobService = {
-  async createFromEnquiry(
-    enquiryId: string,
+  async create(
+    input: CreateJobInput,
     actorId?: string | null,
   ): Promise<Result<Job>> {
     try {
-      const enquiry = await prisma.enquiry.findUnique({
-        where: { id: enquiryId },
-      });
-      if (!enquiry) {
-        return err("Enquiry not found.");
-      }
-      if (enquiry.status !== "DEPOSIT_PAID") {
-        return err(
-          "A job can only be created when the enquiry is Deposit Paid.",
-        );
-      }
+      const contactName = input.contactName.trim();
+      const contactEmail = input.contactEmail?.trim() || null;
+      const contactPhone = input.contactPhone?.trim() || null;
 
-      const existing = await prisma.job.findUnique({
-        where: { enquiryId: enquiry.id },
-      });
-      if (existing) {
-        return err("A job already exists for this enquiry.");
+      if (!contactName) return err("Contact name is required.");
+      if (!SERVICE_TYPES.includes(input.serviceType)) {
+        return err("Invalid service type.");
+      }
+      if (
+        !(input.scheduledStart instanceof Date) ||
+        Number.isNaN(input.scheduledStart.getTime())
+      ) {
+        return err("Scheduled date is required.");
       }
 
       const referenceResult = await referenceService.next("job");
       if (!referenceResult.success) return referenceResult;
 
-      const scheduledStart = enquiry.moveDate
-        ? moveDateToScheduledStart(enquiry.moveDate, enquiry.serviceType)
-        : null;
+      const title =
+        input.title?.trim() ||
+        `${input.serviceType} — ${contactName}`;
 
-      const job = await prisma.$transaction(async (tx) => {
-        const created = await tx.job.create({
-          data: {
-            reference: referenceResult.data,
-            title: `${enquiry.serviceType} — ${enquiry.contactName}`,
-            serviceType: enquiry.serviceType,
-            enquiryId: enquiry.id,
-            addressFrom: enquiry.fromAddress,
-            addressTo: enquiry.toAddress,
-            scheduledStart,
-            status: "DRAFT",
-          },
-        });
-
-        await tx.enquiry.update({
-          where: { id: enquiry.id },
-          data: { status: "JOB_CREATED" },
-        });
-
-        return created;
+      const job = await prisma.job.create({
+        data: {
+          reference: referenceResult.data,
+          title,
+          serviceType: input.serviceType,
+          contactName,
+          contactEmail,
+          contactPhone,
+          addressFrom: input.addressFrom?.trim() || null,
+          addressTo: input.addressTo?.trim() || null,
+          notes: input.notes?.trim() || null,
+          scheduledStart: input.scheduledStart,
+          status: "DRAFT",
+        },
       });
 
       await activityService.log({
@@ -116,29 +109,18 @@ export const jobService = {
         entityType: "Job",
         entityId: job.id,
         entityReference: job.reference,
-        message: `Job ${job.reference} created from ${enquiry.reference}`,
+        message: `Job ${job.reference} created`,
         actorId,
-        metadata: { enquiryReference: enquiry.reference },
-      });
-
-      await activityService.log({
-        type: "ENQUIRY_STATUS_CHANGED",
-        entityType: "Enquiry",
-        entityId: enquiry.id,
-        entityReference: enquiry.reference,
-        message: `Enquiry ${enquiry.reference} status changed to Job Created`,
-        actorId,
-        metadata: { from: "DEPOSIT_PAID", to: "JOB_CREATED" },
       });
 
       return ok(job);
     } catch (error) {
-      console.error("jobService.createFromEnquiry failed:", error);
+      console.error("jobService.create failed:", error);
       return err("Unable to create job.");
     }
   },
 
-  async list(input: ListJobsInput = {}): Promise<Result<JobWithEnquiry[]>> {
+  async list(input: ListJobsInput = {}): Promise<Result<Job[]>> {
     try {
       const where: Prisma.JobWhereInput = {};
       if (input.status && input.status !== "ALL") {
@@ -149,17 +131,6 @@ export const jobService = {
         where,
         orderBy: { createdAt: "desc" },
         take: input.take ?? 100,
-        include: {
-          enquiry: {
-            select: {
-              id: true,
-              reference: true,
-              contactName: true,
-              status: true,
-              moveDate: true,
-            },
-          },
-        },
       });
 
       return ok(rows);
@@ -169,21 +140,10 @@ export const jobService = {
     }
   },
 
-  async getByReference(reference: string): Promise<Result<JobWithEnquiry>> {
+  async getByReference(reference: string): Promise<Result<Job>> {
     try {
       const job = await prisma.job.findUnique({
         where: { reference: reference.trim() },
-        include: {
-          enquiry: {
-            select: {
-              id: true,
-              reference: true,
-              contactName: true,
-              status: true,
-              moveDate: true,
-            },
-          },
-        },
       });
 
       if (!job) {
@@ -236,7 +196,6 @@ export const jobService = {
     try {
       const existing = await prisma.job.findUnique({
         where: { reference: reference.trim() },
-        include: { enquiry: true },
       });
 
       if (!existing) {
@@ -313,6 +272,17 @@ export const jobService = {
       if (input.title !== undefined && input.title?.trim()) {
         data.title = input.title.trim();
       }
+      if (input.contactName !== undefined) {
+        const name = input.contactName?.trim() ?? "";
+        if (!name) return err("Contact name is required.");
+        data.contactName = name;
+      }
+      if (input.contactEmail !== undefined) {
+        data.contactEmail = input.contactEmail?.trim() || null;
+      }
+      if (input.contactPhone !== undefined) {
+        data.contactPhone = input.contactPhone?.trim() || null;
+      }
 
       const updated = await prisma.job.update({
         where: { id: existing.id },
@@ -343,48 +313,6 @@ export const jobService = {
         });
       }
 
-      // Keep enquiry lifecycle in sync with job schedule/completion
-      if (updated.status === "SCHEDULED" || updated.status === "IN_PROGRESS") {
-        if (
-          existing.enquiry.status === "JOB_CREATED" ||
-          existing.enquiry.status === "SCHEDULED"
-        ) {
-          await prisma.enquiry.update({
-            where: { id: existing.enquiryId },
-            data: { status: "SCHEDULED" },
-          });
-          if (existing.enquiry.status !== "SCHEDULED") {
-            await activityService.log({
-              type: "ENQUIRY_STATUS_CHANGED",
-              entityType: "Enquiry",
-              entityId: existing.enquiryId,
-              entityReference: existing.enquiry.reference,
-              message: `Enquiry ${existing.enquiry.reference} status changed to Scheduled`,
-              actorId,
-              metadata: { from: existing.enquiry.status, to: "SCHEDULED" },
-            });
-          }
-        }
-      }
-
-      if (updated.status === "COMPLETED") {
-        await prisma.enquiry.update({
-          where: { id: existing.enquiryId },
-          data: { status: "COMPLETED" },
-        });
-        if (existing.enquiry.status !== "COMPLETED") {
-          await activityService.log({
-            type: "ENQUIRY_STATUS_CHANGED",
-            entityType: "Enquiry",
-            entityId: existing.enquiryId,
-            entityReference: existing.enquiry.reference,
-            message: `Enquiry ${existing.enquiry.reference} status changed to Completed`,
-            actorId,
-            metadata: { from: existing.enquiry.status, to: "COMPLETED" },
-          });
-        }
-      }
-
       return ok({ job: updated, overlapWarnings });
     } catch (error) {
       console.error("jobService.update failed:", error);
@@ -395,7 +323,7 @@ export const jobService = {
   async listInRange(
     rangeStart: Date,
     rangeEnd: Date,
-  ): Promise<Result<JobWithEnquiry[]>> {
+  ): Promise<Result<Job[]>> {
     try {
       const rows = await prisma.job.findMany({
         where: {
@@ -416,17 +344,6 @@ export const jobService = {
           ],
         },
         orderBy: { scheduledStart: "asc" },
-        include: {
-          enquiry: {
-            select: {
-              id: true,
-              reference: true,
-              contactName: true,
-              status: true,
-              moveDate: true,
-            },
-          },
-        },
       });
 
       return ok(rows);
@@ -436,7 +353,7 @@ export const jobService = {
     }
   },
 
-  async listForDay(day: Date): Promise<Result<JobWithEnquiry[]>> {
+  async listForDay(day: Date): Promise<Result<Job[]>> {
     const { start, end } = dayBounds(day);
     return this.listInRange(start, end);
   },
@@ -456,6 +373,54 @@ export const jobService = {
     } catch (error) {
       console.error("jobService.countStartingBetween failed:", error);
       return err("Unable to count jobs.");
+    }
+  },
+
+  async delete(
+    reference: string,
+    actorId?: string | null,
+  ): Promise<Result<{ reference: string }>> {
+    try {
+      const existing = await prisma.job.findUnique({
+        where: { reference: reference.trim() },
+      });
+
+      if (!existing) {
+        return err("Job not found.");
+      }
+
+      if (!canDeleteJob(existing.status)) {
+        return err("Only completed jobs can be deleted.");
+      }
+
+      await prisma.job.delete({ where: { id: existing.id } });
+
+      await activityService.log({
+        type: "JOB_UPDATED",
+        entityType: "Job",
+        entityId: existing.id,
+        entityReference: existing.reference,
+        message: `Job ${existing.reference} deleted`,
+        actorId,
+        metadata: { deleted: true, status: existing.status },
+      });
+
+      return ok({ reference: existing.reference });
+    } catch (error) {
+      console.error("jobService.delete failed:", error);
+      return err("Unable to delete job.");
+    }
+  },
+
+  async countDraft(): Promise<Result<number>> {
+    try {
+      const count = await prisma.job.count({
+        where: { status: "DRAFT" },
+      });
+      return ok(count);
+    } catch (error) {
+      console.error("jobService.countDraft failed:", error);
+      return err("Unable to count draft jobs.");
     }
   },
 };

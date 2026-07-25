@@ -39,7 +39,7 @@ The repo is a Next.js App Router marketing site. Admin must grow module-by-modul
 
 ### Service layer + thin Server Actions
 
-- One place for validation and business rules (e.g. job creation only at `DEPOSIT_PAID`).
+- One place for validation and business rules (e.g. job status transitions).
 - Actions validate transport-level input, call one service method, return its `Result`.
 - Expected failures are `success: false` — not thrown — so Actions stay free of try/catch noise. Unexpected errors are logged and converted to a generic `Result` failure before reaching the client.
 
@@ -58,7 +58,7 @@ The repo is a Next.js App Router marketing site. Admin must grow module-by-modul
 ```
 src/app/(marketing)/…
 src/app/(admin)/admin/…
-src/lib/services/          # enquiry, job, activity, reference, auth helpers
+src/lib/services/          # job, activity, reference, auth helpers
 src/lib/db/                # Prisma client
 src/components/admin/      # shell + module UI
 docs/architecture/         # ADRs

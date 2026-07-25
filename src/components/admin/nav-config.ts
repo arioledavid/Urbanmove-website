@@ -6,7 +6,6 @@ import {
   IconCash,
   IconChartBar,
   IconFileDescription,
-  IconInbox,
   IconLayoutDashboard,
   IconSettings,
   IconTruck,
@@ -28,12 +27,6 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/dashboard",
     icon: IconLayoutDashboard,
     section: "Overview",
-  },
-  {
-    label: "Enquiries",
-    href: "/enquiries",
-    icon: IconInbox,
-    section: "Operations",
   },
   {
     label: "Jobs",

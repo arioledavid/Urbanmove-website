@@ -37,16 +37,16 @@ await activityService.log({ … })
 ```
 
 Minimum Phase 0/1 types (enum):  
-`ENQUIRY_CREATED`, `ENQUIRY_UPDATED`, `ENQUIRY_STATUS_CHANGED`,  
+`ENQUIRY_CREATED`, `ENQUIRY_UPDATED`, `ENQUIRY_STATUS_CHANGED` (legacy),  
 `JOB_CREATED`, `JOB_UPDATED`, `JOB_STATUS_CHANGED`,  
 `LOGIN_SUCCESS`, `LOGIN_FAILURE`.
 
-Extend the enum when new mutation kinds appear. Prefer direct calls over an event bus (ADR 004).
+Extend the enum when new mutation kinds appear. Prefer direct calls over an event bus (ADR 004). Legacy `ENQUIRY_*` types remain valid for historical activity rows.
 
 ### 4. Human-readable references only in UI and URLs
 
-- User-facing entities expose `reference` (e.g. `ENQ-20260716-0001`).
-- **Never** show MongoDB `ObjectId` in the UI, copy, or routes (`/admin/enquiries/ENQ-…`, not `/…/664f…`).
+- User-facing entities expose `reference` (e.g. `JOB-20260716-0001`).
+- **Never** show MongoDB `ObjectId` in the UI, copy, or routes (`/admin/jobs/JOB-…`, not `/…/664f…`).
 - Only `ReferenceService` formats and allocates references (ADR 003).
 
 ### 5. Server Actions are thin
@@ -54,9 +54,9 @@ Extend the enum when new mutation kinds appear. Prefer direct calls over an even
 ```ts
 "use server";
 
-export async function createEnquiry(input: EnquiryInput) {
+export async function createJobAction(formData: FormData) {
   // transport-level checks only (e.g. shape / auth present)
-  return enquiryService.create(input); // already Result<T>
+  return jobService.create(/* … */); // already Result<T>
 }
 ```
 
@@ -66,11 +66,11 @@ export async function createEnquiry(input: EnquiryInput) {
 
 ## Context
 
-Without written constraints, Next.js apps accumulate Prisma calls in Server Components and duplicated validation between the public quote API and admin forms. These five rules keep Phase 1–4 from rewriting the architecture.
+Without written constraints, Next.js apps accumulate Prisma calls in Server Components and duplicated validation. These five rules keep later phases from rewriting the architecture.
 
 ## Why
 
-- Single domain entry point keeps website intake and admin edits consistent.
+- Single domain entry point keeps admin mutations consistent.
 - `Result<T>` standardises error UX and Action code.
 - Activity feed and dashboard “recent activity” stay trustworthy.
 - Reference URLs stay stable if databases are re-seeded or migrated.

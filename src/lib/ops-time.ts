@@ -114,7 +114,7 @@ export function isPastOpsDateTime(date: Date): boolean {
 }
 
 /**
- * Turn an enquiry move date into a job scheduled start.
+ * Turn a move date into a job scheduled start.
  * Courier keeps the requested time; other services default to 09:00 ops time.
  */
 export function moveDateToScheduledStart(
