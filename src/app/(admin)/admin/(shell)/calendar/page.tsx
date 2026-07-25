@@ -101,8 +101,9 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
                 href={`/calendar/${dayKey(day.date)}`}
                 className={cn(
                   "min-h-14 border-r border-b border-border p-1 transition-[background-color,transform] duration-150 ease-out last:border-r-0 active:scale-[0.98] sm:min-h-28 sm:p-1.5 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface/80",
-                  !day.inCurrentMonth && "bg-surface/50",
-                  hasOverlap && day.inCurrentMonth && "bg-[#FFF8E6]",
+                  !day.inCurrentMonth && !isToday && "bg-surface/50",
+                  hasOverlap && day.inCurrentMonth && !isToday && "bg-[#FFF8E6]",
+                  isToday && "bg-primary/10",
                 )}
               >
                 <div className="mb-0.5 flex items-center justify-between gap-0.5 sm:mb-1">
@@ -110,7 +111,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
                     className={cn(
                       "inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium sm:h-auto sm:w-auto sm:rounded-none",
                       day.inCurrentMonth ? "text-ink" : "text-subtle",
-                      isToday && "bg-primary text-paper sm:bg-transparent sm:text-primary sm:underline sm:decoration-2",
+                      isToday && "font-semibold text-primary",
                     )}
                   >
                     {day.date.getDate()}

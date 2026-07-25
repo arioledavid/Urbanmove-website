@@ -43,7 +43,7 @@ export function AdminShell({
   }, [mobileOpen]);
 
   return (
-    <div className="flex min-h-full bg-surface">
+    <div className="flex min-h-dvh bg-surface">
       <AdminSidebar
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}

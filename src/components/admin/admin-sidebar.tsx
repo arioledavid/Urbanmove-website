@@ -32,6 +32,9 @@ export function AdminSidebar({
   userRole,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const settingsItem = ADMIN_NAV.find((item) => item.href === "/settings");
+  const settingsActive = isActive(pathname, "/settings");
+  const SettingsIcon = settingsItem?.icon;
 
   return (
     <>
@@ -51,7 +54,7 @@ export function AdminSidebar({
           "fixed inset-y-0 left-0 z-50 flex w-[min(18rem,calc(100vw-3rem))] flex-col border-r border-border bg-paper",
           "pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]",
           "transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
-          "lg:static lg:w-64 lg:translate-x-0 lg:pt-0 lg:pb-0 lg:pl-0",
+          "lg:static lg:min-h-dvh lg:w-64 lg:translate-x-0 lg:pt-0 lg:pb-0 lg:pl-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
         aria-label="Admin navigation"
@@ -82,7 +85,12 @@ export function AdminSidebar({
 
         <nav className="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
           {ADMIN_NAV_SECTIONS.map((section) => {
-            const items = ADMIN_NAV.filter((item) => item.section === section);
+            const items = ADMIN_NAV.filter(
+              (item) =>
+                item.section === section &&
+                !item.soon &&
+                item.href !== "/settings",
+            );
             if (items.length === 0) return null;
 
             return (
@@ -104,16 +112,10 @@ export function AdminSidebar({
                             active
                               ? "bg-surface font-medium text-ink shadow-[inset_3px_0_0_0_var(--primary)]"
                               : "text-muted [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface [@media(hover:hover)_and_(pointer:fine)]:hover:text-ink",
-                            item.soon && !active ? "opacity-70" : null,
                           )}
                         >
                           <Icon className="h-4 w-4 shrink-0" aria-hidden />
                           <span className="flex-1">{item.label}</span>
-                          {item.soon ? (
-                            <span className="text-[10px] font-medium tracking-wide text-subtle uppercase">
-                              Soon
-                            </span>
-                          ) : null}
                         </Link>
                       </li>
                     );
@@ -124,9 +126,28 @@ export function AdminSidebar({
           })}
         </nav>
 
-        <div className="border-t border-border px-4 py-3">
-          <p className="truncate text-sm font-medium text-ink">{userEmail}</p>
-          <p className="text-xs text-muted capitalize">{userRole.toLowerCase()}</p>
+        <div className="shrink-0 border-t border-border px-3 py-3">
+          {settingsItem && SettingsIcon ? (
+            <Link
+              href={settingsItem.href}
+              onClick={onClose}
+              className={cn(
+                "mb-3 flex min-h-11 items-center gap-2.5 rounded-md px-2.5 py-2.5 text-sm transition-[color,background-color,transform] duration-150 ease-out active:scale-[0.98]",
+                settingsActive
+                  ? "bg-surface font-medium text-ink shadow-[inset_3px_0_0_0_var(--primary)]"
+                  : "text-muted [@media(hover:hover)_and_(pointer:fine)]:hover:bg-surface [@media(hover:hover)_and_(pointer:fine)]:hover:text-ink",
+              )}
+            >
+              <SettingsIcon className="h-4 w-4 shrink-0" aria-hidden />
+              <span className="flex-1">{settingsItem.label}</span>
+            </Link>
+          ) : null}
+          <div className="px-2.5">
+            <p className="truncate text-sm font-medium text-ink">{userEmail}</p>
+            <p className="text-xs text-muted capitalize">
+              {userRole.toLowerCase()}
+            </p>
+          </div>
         </div>
       </aside>
     </>

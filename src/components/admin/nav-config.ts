@@ -93,7 +93,6 @@ export const ADMIN_NAV: AdminNavItem[] = [
     label: "Settings",
     href: "/settings",
     icon: IconSettings,
-    soon: true,
     section: "System",
   },
 ];

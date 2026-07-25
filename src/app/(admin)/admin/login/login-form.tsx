@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { signIn } from "next-auth/react";
+import { PasswordInput } from "@/components/admin/password-input";
 
 type LoginFormProps = {
   callbackUrl?: string;
@@ -94,14 +95,13 @@ export function LoginForm({ callbackUrl, error }: LoginFormProps) {
         >
           Password
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
           minLength={12}
-          className="h-11 w-full rounded-md border border-border bg-paper px-3 text-sm text-ink outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="h-11"
         />
       </div>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { JobStatus } from "@prisma/client";
+import { JobStatusFilter } from "@/components/admin/job-status-filter";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge, jobStatusTone } from "@/components/admin/status-badge";
 import {
@@ -49,34 +50,9 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         }
       />
 
-      <form className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="sm:w-56">
-          <label
-            htmlFor="status"
-            className="mb-1 block text-xs font-medium text-muted"
-          >
-            Status
-          </label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={status}
-            className="h-11 w-full rounded-md border border-border bg-paper px-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 sm:h-10"
-          >
-            {FILTER_STATUSES.map((value) => (
-              <option key={value} value={value}>
-                {value === "ALL" ? "All statuses" : JOB_STATUS_LABELS[value]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-md bg-ink px-4 text-sm font-medium text-paper transition-transform duration-150 ease-out active:scale-[0.97] sm:h-10 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary-hover"
-        >
-          Apply
-        </button>
-      </form>
+      <div className="mb-4">
+        <JobStatusFilter value={status} />
+      </div>
 
       {!result.success ? (
         <p className="text-sm text-primary" role="alert">
