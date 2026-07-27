@@ -135,11 +135,10 @@ export const BUSINESS = {
   whatsapp: `https://wa.me/${BUSINESS_TELEPHONE.replace(/\D/g, "")}`,
   email: "info@urbanmovelogistics.co.uk",
   address: {
-    streetAddress:
-      "Enterprise Centre, Aberdeen Energy Park, Exploration Drive",
-    addressLocality: "Bridge of Don, Aberdeen",
+    streetAddress: "64B Menzies Rd",
+    addressLocality: "Aberdeen",
     addressRegion: "Scotland",
-    postalCode: "AB23 8GX",
+    postalCode: "AB11 9BH",
     addressCountry: "GB",
   },
   sameAs: [
