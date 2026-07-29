@@ -89,7 +89,7 @@ export function buildServiceMetadata(
     "ogImage" in service && service.ogImage ? service.ogImage : service.image;
 
   return buildSocialMetadata({
-    title: service.title,
+    title: `${service.title} in Aberdeen`,
     description: getServiceHeroDescription(service),
     canonical: `/services/${slug}`,
     image,
