@@ -34,7 +34,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "service-areas",
     question: "What areas does Urbanmove serve?",
     answer:
-      "Urbanmove covers local, national, and international moves. Get in touch and we'll advise on coverage for your route and how we can help.",
+      "Urbanmove is based in Aberdeen and covers local moves across the city and surrounding area. We also handle national routes across the UK, and can advise on international moves when needed. Get in touch and we'll confirm coverage for your route.",
   },
   {
     id: "change-cancel-booking",

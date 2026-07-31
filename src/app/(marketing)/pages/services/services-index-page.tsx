@@ -1,11 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaqSection } from "@/components/faq/faq-section";
+import { JsonLd } from "@/components/seo/json-ld";
+import { getBreadcrumbJsonLd } from "@/lib/seo";
 import { NAV_SERVICE_ORDER, SERVICES_DATA } from "@/lib/services-data";
 
 export default function ServicesIndexPage() {
   return (
     <main className="flex flex-1 flex-col bg-paper font-sans">
+      <JsonLd
+        data={getBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+        ])}
+      />
       <section
         className="border-b border-border bg-paper pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20"
         aria-labelledby="services-index-heading"
@@ -22,8 +30,9 @@ export default function ServicesIndexPage() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
             Removals, man and van, storage, furniture delivery, waste clearance,
-            student moves, cargo freight and same-day courier in Aberdeen and
-            across the UK. Choose a service to learn more or get a quote.
+            student moves, cargo freight and same-day courier in Aberdeen with
+            UK-wide coverage when you need it. Choose a service to learn more or
+            get a quote.
           </p>
         </div>
       </section>
