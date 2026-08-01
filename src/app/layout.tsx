@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     template: "%s | Urbanmove Logistics",
   },
   description:
-    "Professional removals, same-day courier and waste clearance in Aberdeen and across the UK. Trusted local logistics.",
+    "Professional removals, man and van, same-day courier and waste clearance in Aberdeen. Trusted local logistics with UK-wide coverage.",
   keywords: DEFAULT_KEYWORDS,
   openGraph: {
     type: "website",

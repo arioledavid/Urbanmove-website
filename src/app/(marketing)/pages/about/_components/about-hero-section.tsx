@@ -10,7 +10,7 @@ const ABOUT_HERO_IMAGE =
   "/hero/gpt-image-2_minimalist_abstract_logistics_background_sleek_delivery_van_and_stacked_parcels_-0.jpg";
 
 const ABOUT_HERO_IMAGE_ALT =
-  "Urbanmove Logistics delivery van and stacked parcels on route in Aberdeen and across the UK";
+  "Urbanmove Logistics delivery van and stacked parcels on route in Aberdeen";
 
 const HEADLINE = "About Urbanmove";
 

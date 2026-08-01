@@ -141,12 +141,25 @@ export const BUSINESS = {
     postalCode: "AB11 9BH",
     addressCountry: "GB",
   },
+  /** Approximate coordinates for AB11 9BH (Menzies Rd, Aberdeen). */
+  geo: {
+    latitude: 57.136649,
+    longitude: -2.092033,
+  },
   sameAs: [
     "https://share.google/AHsYcQG5lAIDC5gYW",
     "https://www.instagram.com/urbanmovelogistics",
     "https://www.tiktok.com/@urbanmovelogistics",
   ],
 } as const;
+
+/** Stable sitemap lastModified — bump when marketing content meaningfully changes. */
+export const SITEMAP_LAST_MODIFIED = new Date("2026-07-31");
+
+const AREA_SERVED = [
+  { "@type": "City", name: "Aberdeen" },
+  { "@type": "Country", name: "United Kingdom" },
+] as const;
 
 export function getMovingCompanyJsonLd() {
   return {
@@ -178,10 +191,12 @@ export function getMovingCompanyJsonLd() {
       postalCode: BUSINESS.address.postalCode,
       addressCountry: BUSINESS.address.addressCountry,
     },
-    areaServed: [
-      { "@type": "City", name: "Aberdeen" },
-      { "@type": "Country", name: "United Kingdom" },
-    ],
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: BUSINESS.geo.latitude,
+      longitude: BUSINESS.geo.longitude,
+    },
+    areaServed: [...AREA_SERVED],
     sameAs: BUSINESS.sameAs,
     image: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
   };
@@ -200,6 +215,24 @@ export function getServiceJsonLd(slug: ServiceSlug, service: ServiceData) {
       name: BUSINESS.name,
       url: BUSINESS.url,
     },
-    areaServed: { "@type": "Country", name: "United Kingdom" },
+    areaServed: [...AREA_SERVED],
+  };
+}
+
+export type BreadcrumbItem = {
+  name: string;
+  path: string;
+};
+
+export function getBreadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path === "/" ? "" : item.path}`,
+    })),
   };
 }

@@ -37,7 +37,7 @@ export function HeroMedia({ videoSrc }: HeroMediaProps) {
         loop={!reduceMotion}
         playsInline
         autoPlay={!reduceMotion}
-        preload="auto"
+        preload="metadata"
         aria-hidden
       />
     </div>

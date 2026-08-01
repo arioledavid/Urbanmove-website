@@ -8,7 +8,11 @@ import {
   SERVICE_SLUGS,
   type ServiceSlug,
 } from "@/lib/services-data";
-import { buildServiceMetadata, getServiceJsonLd } from "@/lib/seo";
+import {
+  buildServiceMetadata,
+  getBreadcrumbJsonLd,
+  getServiceJsonLd,
+} from "@/lib/seo";
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
@@ -52,6 +56,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
   return (
     <>
       <JsonLd data={getServiceJsonLd(typedSlug, service)} />
+      <JsonLd
+        data={getBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: service.title, path: `/services/${typedSlug}` },
+        ])}
+      />
       <ServiceDetailPage slug={typedSlug} service={service} />
     </>
   );
