@@ -106,11 +106,11 @@ export function VideoLightbox({
 
             <div className="bg-ink">
               {isVideo ? (
-                <div className="aspect-video">
+                <div className="flex max-h-[75vh] items-center justify-center">
                   <video
                     ref={videoRef}
                     key={video.id}
-                    className="h-full w-full object-cover"
+                    className="max-h-[75vh] w-full object-contain"
                     src={video.src}
                     poster={video.poster}
                     controls

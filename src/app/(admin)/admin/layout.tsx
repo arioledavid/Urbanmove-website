@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "Admin | Urbanmove Logistics",
-    template: "%s | Urbanmove Admin",
+    default: "Admin | UrbanMove Logistics",
+    template: "%s | UrbanMove Admin",
   },
   robots: {
     index: false,

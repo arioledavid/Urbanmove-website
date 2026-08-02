@@ -30,7 +30,7 @@ export async function generateMetadata({
 
   if (!service) {
     return {
-      title: { absolute: "Service Not Found | Urbanmove Logistics" },
+      title: { absolute: "Service Not Found | UrbanMove Logistics" },
       robots: { index: false },
     };
   }
