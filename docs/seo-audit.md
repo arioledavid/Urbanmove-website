@@ -1,4 +1,4 @@
-# SEO Audit: Urbanmove Logistics
+# SEO Audit: UrbanMove Logistics
 
 > Last updated: 2026-07-31 · Status: Technical foundation complete; Aberdeen-first content + schema enrichment in progress; DNS/GSC/GTM cutover still pending
 
@@ -59,7 +59,7 @@ All name, address, and phone values flow from `BUSINESS` in `src/lib/seo.ts`:
 
 | Field | Value | Used in |
 |-------|-------|---------|
-| Name | Urbanmove Logistics | Footer, JSON-LD, emails |
+| Name | UrbanMove Logistics | Footer, JSON-LD, emails |
 | Phone (E.164) | `+447776446254` | JSON-LD, `tel:` hrefs |
 | Phone (display) | `+44 7776 446254` | Footer, legal, quote emails |
 | Email | info@urbanmovelogistics.co.uk | Footer, JSON-LD, legal |

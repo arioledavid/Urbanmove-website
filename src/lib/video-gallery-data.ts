@@ -13,16 +13,22 @@ export type GalleryVideo = GalleryItem;
 
 /**
  * Homepage gallery media from `public/gallery/`.
- * One tile per uploaded asset (2 videos + 4 photos).
+ * One tile per uploaded asset (3 videos + 4 photos).
  */
 export const GALLERY_VIDEOS: GalleryItem[] = [
   {
-    id: "crew-run",
-    title: "Crew on the move",
-    caption: "Real footage from an Urban Move job.",
-    src: "/gallery/crew-run.mp4",
-    poster: "/gallery/crew-run-poster.png",
-    duration: "0:22",
+    id: "job-clip",
+    title: "Liftgate loading",
+    caption: "Cases wrapped, loaded, and ready to roll.",
+    src: "/gallery/job-clip.mp4",
+    poster: "/gallery/job-clip-poster.jpg",
+    duration: "0:40",
+  },
+  {
+    id: "van-crew",
+    title: "At the van",
+    caption: "Crew ready for the next pickup.",
+    poster: "/gallery/van-crew.jpg",
   },
   {
     id: "packing-truck",
@@ -43,10 +49,12 @@ export const GALLERY_VIDEOS: GalleryItem[] = [
     poster: "/gallery/piano-move.png",
   },
   {
-    id: "van-crew",
-    title: "At the van",
-    caption: "Crew ready for the next pickup.",
-    poster: "/gallery/van-crew.jpg",
+    id: "crew-run",
+    title: "Crew on the move",
+    caption: "Real footage from an UrbanMove job.",
+    src: "/gallery/crew-run.mp4",
+    poster: "/gallery/crew-run-poster.png",
+    duration: "0:22",
   },
   {
     id: "van-loading",

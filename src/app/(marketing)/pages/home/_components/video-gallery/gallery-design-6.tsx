@@ -19,7 +19,8 @@ const TILE_CLASS: Record<number, string> = {
   2: "aspect-[4/3] md:aspect-auto md:h-full",
   3: "aspect-[4/3] md:aspect-auto md:h-full",
   4: "aspect-[4/3] md:aspect-auto md:h-full",
-  5: "aspect-[4/3] md:col-span-4 md:aspect-auto md:h-full",
+  5: "aspect-[4/3] md:col-span-2 md:aspect-auto md:h-full",
+  6: "aspect-[4/3] md:col-span-2 md:aspect-auto md:h-full",
 };
 
 export function GalleryDesign6() {

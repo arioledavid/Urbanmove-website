@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Urbanmove Logistics",
-    short_name: "Urbanmove",
+    name: "UrbanMove Logistics",
+    short_name: "UrbanMove",
     theme_color: "#000000",
     background_color: "#000000",
     display: "standalone",
