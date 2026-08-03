@@ -153,8 +153,8 @@ export const BUSINESS = {
   ],
 } as const;
 
-/** Stable sitemap lastModified — bump when marketing content meaningfully changes. */
-export const SITEMAP_LAST_MODIFIED = new Date("2026-07-31");
+/** Captured when this module is evaluated (build time when sitemap is force-static). */
+export const SITEMAP_LAST_MODIFIED = new Date();
 
 const AREA_SERVED = [
   { "@type": "City", name: "Aberdeen" },

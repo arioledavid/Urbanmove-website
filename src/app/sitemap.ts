@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { NAV_SERVICE_ORDER } from "@/lib/services-data";
 import { SITE_URL, SITEMAP_LAST_MODIFIED } from "@/lib/seo";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = ["", "/about", "/contact", "/services", "/privacy", "/legal"] as const;
 
