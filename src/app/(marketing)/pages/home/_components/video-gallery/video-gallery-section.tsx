@@ -16,8 +16,12 @@ export function VideoGallerySection() {
             id="video-gallery-heading"
             className="text-[clamp(1.75rem,4vw,2.5rem)] leading-tight font-semibold tracking-[-0.02em] text-ink text-balance"
           >
-            On the Job
+            On the Job in Aberdeen
           </h2>
+          <p className="mt-3 text-base leading-relaxed text-ink/70 text-pretty sm:text-lg">
+            Man and van, house removals, furniture delivery, and piano moves
+            captured in Aberdeen.
+          </p>
         </div>
 
         <div className="md:hidden">

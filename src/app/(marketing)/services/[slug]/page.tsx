@@ -30,7 +30,7 @@ export async function generateMetadata({
 
   if (!service) {
     return {
-      title: { absolute: "Service Not Found | UrbanMove Logistics" },
+      title: { absolute: "Service Not Found | UrbanMove Removals Man and Van Cleaning Services Ltd" },
       robots: { index: false },
     };
   }

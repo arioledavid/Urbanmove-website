@@ -1,12 +1,12 @@
 export const SERVICES_DATA = {
   "house-office-removals": {
-    title: "House & Office Removals",
+    title: "House & Office Removals in Aberdeen",
     subtitle: "A seamless transition, engineered around your timeline.",
     navDescription:
       "Tailored moving services with strict timelines and zero stress.",
     image: "/removal.jpg",
     imageAlt:
-      "UrbanMove Logistics team carrying labelled moving boxes during a house removal in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd team carrying labelled moving boxes during a house removal in Aberdeen",
     heroDescription:
       "Whether moving a high-end corporate headquarters or a premium residential estate, we eliminate the friction. Our team manages every detail with absolute care and zero stress.",
     steps: [
@@ -34,14 +34,14 @@ export const SERVICES_DATA = {
     ],
   },
   "man-and-van": {
-    title: "Man & Van Services",
+    title: "Man & Van Services in Aberdeen",
     subtitle: "Fast, reliable and affordable moving solutions.",
     navDescription:
       "Local and long-distance moves from £89 per hour with loading and unloading included.",
     image: "/manandvan.png",
     ogImage: "/og/manandvan.jpg",
     imageAlt:
-      "UrbanMove Logistics man and van team loading furniture for a local move in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd man and van team loading furniture for a local move in Aberdeen",
     heroDescription:
       "Whether you're moving a single item, relocating to a new home, or need furniture collected and delivered, our professional Man & Van service makes moving simple and stress-free.",
     heroHighlight: "From just £89 per hour",
@@ -98,16 +98,16 @@ export const SERVICES_DATA = {
     ctaButtonLabel: "Get a Free Quote",
   },
   "storage-solutions": {
-    title: "Storage Solutions",
+    title: "Storage Solutions in Aberdeen",
     subtitle: "Flexible, secure storage when you need it.",
     navDescription:
       "Short- and long-term storage for furniture and belongings via trusted partner facilities.",
     image: "/storage-service.png",
     ogImage: "/og/storage-service.jpg",
     imageAlt:
-      "UrbanMove Logistics team preparing furniture and belongings for secure storage in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd team preparing furniture and belongings for secure storage in Aberdeen",
     heroDescription:
-      "Whether you're moving home, relocating your business, renovating, downsizing, or simply need temporary storage for furniture and personal belongings, UrbanMove Logistics provides flexible storage solutions through our trusted storage partners.",
+      "Whether you're moving home, relocating your business, renovating, downsizing, or simply need temporary storage for furniture and personal belongings, UrbanMove Removals Man and Van Cleaning Services Ltd provides flexible storage solutions through our trusted storage partners.",
     heroDescriptionContinued:
       "From a single item to the full contents of a property, we make storing your belongings simple, secure, and stress-free.",
     steps: [
@@ -147,12 +147,12 @@ export const SERVICES_DATA = {
       "We manage the entire process from collection and transport to storage coordination and final delivery, ensuring your belongings remain safe, secure, and fully insured at every stage.",
   },
   "furniture-delivery-assembly": {
-    title: "Furniture Delivery & Assembly",
+    title: "Furniture Delivery & Assembly in Aberdeen",
     subtitle: "White-glove logistics. From showroom to living room.",
     navDescription: "Secure transport, unboxing, and precise assembly.",
     image: "/furniture-delivery.png",
     imageAlt:
-      "UrbanMove Logistics movers delivering and assembling furniture in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd movers delivering and assembling furniture in Aberdeen",
     heroDescription:
       "We don't just drop off heavy boxes. Our specialized team handles careful secure transport, meticulous unboxing, and precise assembly exactly where you intend it to live.",
     steps: [
@@ -180,12 +180,12 @@ export const SERVICES_DATA = {
     ],
   },
   "household-waste-clearance": {
-    title: "Household Waste Clearance",
+    title: "Household Waste Clearance in Aberdeen",
     subtitle: "Responsible space clearance. Reclaim your environment.",
     navDescription: "Licensed, thorough clearance with responsible disposal.",
     image: "/household-waste.jpg",
     imageAlt:
-      "UrbanMove Logistics household waste clearance team removing items from a property in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd household waste clearance team removing items from a property in Aberdeen",
     heroDescription:
       "Efficient, licensed, and thorough property clearance that respects your home and the ecosystem. We ethically process, recycle, and repurpose unwanted items with speed and care.",
     steps: [
@@ -213,12 +213,12 @@ export const SERVICES_DATA = {
     ],
   },
   "student-moves": {
-    title: "Student Moves",
+    title: "Student Moves in Aberdeen",
     subtitle: "Streamlined relocation built around your academic term.",
     navDescription: "Fast, organized relocations built around term dates.",
     image: "/student-moves.png",
     imageAlt:
-      "UrbanMove Logistics van helping a student move belongings in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd van helping a student move belongings in Aberdeen",
     heroDescription:
       "Moving shouldn't disrupt your studies. We provide highly organized, efficient, and budget-conscious transit options customized around strict university timelines.",
     steps: [
@@ -246,13 +246,13 @@ export const SERVICES_DATA = {
     ],
   },
   cargo: {
-    title: "Cargo & Freight Logistics",
+    title: "Cargo & Freight Logistics in Aberdeen",
     subtitle: "Secure freight transport with complete supply chain visibility.",
     navDescription:
       "Secure freight transport with full pickup to delivery visibility.",
     image: "/cargo.png",
     imageAlt:
-      "UrbanMove Logistics cargo and freight pallets prepared for secure UK delivery",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd cargo and freight pallets prepared for secure UK delivery",
     heroDescription:
       "Comprehensive B2B and palletized distribution designed around strict logistical dependencies. We track every mile to guarantee that your heavy freight arrives in mint condition.",
     steps: [
@@ -280,12 +280,12 @@ export const SERVICES_DATA = {
     ],
   },
   "same-day-courier": {
-    title: "Same Day Courier",
+    title: "Same Day Courier in Aberdeen",
     subtitle: "When timing is everything. Direct and instantaneous.",
     navDescription: "Rapid pickup and direct delivery across the UK.",
     image: "/same-day-courier.png",
     imageAlt:
-      "UrbanMove Logistics courier handing a same-day parcel delivery to a customer in Aberdeen",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd courier handing a same-day parcel delivery to a customer in Aberdeen",
     heroDescription:
       "High-priority courier service designed for rapid dispatch and zero-delay transit across the UK. Absolute transparency from secure pickup to electronic proof of delivery.",
     steps: [

@@ -1,7 +1,7 @@
 import ContactPage from "../pages/contact/contact-page";
 import { buildSocialMetadata } from "@/lib/seo";
 
-const CONTACT_TITLE = "Contact Us | Get a Quote | UrbanMove Logistics";
+const CONTACT_TITLE = "Contact Us | Get a Quote | UrbanMove Removals Man and Van Cleaning Services Ltd";
 const CONTACT_DESCRIPTION =
   "Free quote for removals, courier, furniture delivery or waste clearance in Aberdeen. Call or message our local team today.";
 

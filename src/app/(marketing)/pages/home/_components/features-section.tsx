@@ -16,7 +16,7 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     title: "Complete Moving & Logistics Solutions for Homes and Businesses",
-    body: "From house and office removals to man-and-van services, furniture assembly, student relocations, storage solutions, skip clearances, cargo partnerships, and reliable last-mile delivery, UrbanMove Logistics delivers seamless, professional services with local expertise and nationwide reach.",
+    body: "From house and office removals to man-and-van services, furniture assembly, student relocations, storage solutions, skip clearances, cargo partnerships, and reliable last-mile delivery, UrbanMove Removals Man and Van Cleaning Services Ltd delivers seamless, professional services with local expertise and nationwide reach.",
     containerClassName: "bg-ink",
     bodyClassName: "max-w-2xl",
     span: "lg:col-span-2",

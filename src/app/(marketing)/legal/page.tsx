@@ -4,7 +4,7 @@ import { BUSINESS, buildSocialMetadata } from "@/lib/seo";
 
 const LEGAL_TITLE = "Legal Notice";
 const LEGAL_DESCRIPTION =
-  "Company registration, contact details and regulatory information for UrbanMove Logistics Ltd.";
+  "Company registration, contact details and regulatory information for UrbanMove Removals Man and Van Cleaning Services Ltd.";
 
 export const metadata = buildSocialMetadata({
   title: LEGAL_TITLE,

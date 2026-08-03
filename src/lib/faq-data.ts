@@ -8,7 +8,7 @@ export type FaqItem = {
 export const FAQ_ITEMS: FaqItem[] = [
   {
     id: "book-service",
-    question: "How do I book a service with UrbanMove?",
+    question: "How do I book a service with UrbanMove Removals Man and Van Cleaning Services Ltd?",
     answer:
       "Go to Get a quote, then select the desired service, time, and manpower needed for your move, making the process quick and convenient.",
   },
@@ -22,19 +22,19 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "packing-materials",
     question: "Do you offer packing materials?",
     answer:
-      "Yes. UrbanMove supplies quality packing materials so your belongings are packed securely for transport, and we can arrange full-service packing on request.",
+      "Yes. UrbanMove Removals Man and Van Cleaning Services Ltd supplies quality packing materials so your belongings are packed securely for transport, and we can arrange full-service packing on request.",
   },
   {
     id: "large-heavy-items",
-    question: "Can UrbanMove handle large or heavy items, such as pianos or safes?",
+    question: "Can UrbanMove Removals Man and Van Cleaning Services Ltd handle large or heavy items, such as pianos or safes?",
     answer:
       "Yes. Our team is trained and equipped to move large or heavy items carefully, using specialist equipment to keep your valuables safe in transit.",
   },
   {
     id: "service-areas",
-    question: "What areas does UrbanMove serve?",
+    question: "What areas does UrbanMove Removals Man and Van Cleaning Services Ltd serve?",
     answer:
-      "UrbanMove is based in Aberdeen and covers local moves across the city and surrounding area. We also handle national routes across the UK, and can advise on international moves when needed. Get in touch and we'll confirm coverage for your route.",
+      "UrbanMove Removals Man and Van Cleaning Services Ltd is based in Aberdeen and covers local moves across the city and surrounding area. We also handle national routes across the UK, and can advise on international moves when needed. Get in touch and we'll confirm coverage for your route.",
   },
   {
     id: "change-cancel-booking",
@@ -44,7 +44,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     id: "book-in-advance",
-    question: "How far in advance should I book my move with UrbanMove?",
+    question: "How far in advance should I book my move with UrbanMove Removals Man and Van Cleaning Services Ltd?",
     answer:
       "Book as early as you can to secure your preferred date. Plans change, and we'll do our best to fit in last-minute moves when we have availability.",
   },
@@ -52,6 +52,6 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "weekends-holidays",
     question: "Do you offer services on weekends and holidays?",
     answer:
-      "Yes. UrbanMove works weekends and holidays where it suits your schedule. Spaces can be limited at busy times, so booking ahead helps lock in your preferred slot.",
+      "Yes. UrbanMove Removals Man and Van Cleaning Services Ltd works weekends and holidays where it suits your schedule. Spaces can be limited at busy times, so booking ahead helps lock in your preferred slot.",
   },
 ];
