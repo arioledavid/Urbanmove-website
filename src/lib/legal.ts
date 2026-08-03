@@ -1,16 +1,17 @@
 import { BUSINESS } from "@/lib/seo";
 
 export const LEGAL = {
-  companyName: "URBANMOVE LOGISTICS LTD",
+  companyName: "URBANMOVE REMOVALS MAN AND VAN CLEANING SERVICES LTD",
   companyNumber: "SC872412",
   vatNumber: "509914375",
   registeredOffice: {
-    line1: "64B Menzies Rd",
-    line2: "Aberdeen",
-    postalCode: "AB11 9BH",
+    line1:
+      "Enterprise Centre Exploration Drive, Aberdeen Science And Energy Park, Bridge Of Don",
+    line2: "Aberdeen, Scotland",
+    postalCode: "AB23 8GX",
   },
   regulatoryText:
-    "UrbanMove Logistics Ltd is a UK-registered transport services company regulated by HM Revenue & Customs (HMRC) for tax and VAT compliance, Companies House for corporate governance and statutory filings, the Driver and Vehicle Standards Agency (DVSA) and Driver and Vehicle Licensing Agency (DVLA) for vehicle and driver compliance, and the Information Commissioner's Office (ICO) for data protection and GDPR compliance.",
+    "UrbanMove Removals Man and Van Cleaning Services Ltd is a UK-registered transport services company regulated by HM Revenue & Customs (HMRC) for tax and VAT compliance, Companies House for corporate governance and statutory filings, the Driver and Vehicle Standards Agency (DVSA) and Driver and Vehicle Licensing Agency (DVLA) for vehicle and driver compliance, and the Information Commissioner's Office (ICO) for data protection and GDPR compliance.",
 } as const;
 
 export const FOOTER_LEGAL_LINKS = [

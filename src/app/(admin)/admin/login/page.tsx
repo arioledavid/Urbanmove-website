@@ -28,7 +28,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             Sign in to Admin
           </h1>
           <p className="mt-1 text-sm text-muted">
-            UrbanMove Logistics operations
+            UrbanMove Removals Man and Van Cleaning Services Ltd operations
           </p>
         </div>
         <LoginForm

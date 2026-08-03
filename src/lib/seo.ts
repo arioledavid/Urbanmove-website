@@ -3,7 +3,7 @@ import type { ServiceData, ServiceSlug } from "@/lib/services-data";
 import { getServiceHeroDescription } from "@/lib/services-data";
 
 export const SITE_URL = "https://www.urbanmovelogistics.co.uk";
-export const SITE_NAME = "UrbanMove Logistics";
+export const SITE_NAME = "UrbanMove Removals Man and Van Cleaning Services Ltd";
 export const DEFAULT_OG_IMAGE = "/og-image.png";
 export const DEFAULT_OG_IMAGE_ALT = SITE_NAME;
 export const STANDARD_OG_WIDTH = 1200;
@@ -89,7 +89,7 @@ export function buildServiceMetadata(
     "ogImage" in service && service.ogImage ? service.ogImage : service.image;
 
   return buildSocialMetadata({
-    title: `${service.title} in Aberdeen`,
+    title: service.title,
     description: getServiceHeroDescription(service),
     canonical: `/services/${slug}`,
     image,
@@ -109,7 +109,7 @@ export const DEFAULT_KEYWORDS = [
   "furniture delivery Aberdeen",
   "student moves Aberdeen",
   "cargo logistics UK",
-  "UrbanMove Logistics",
+  "UrbanMove Removals Man and Van Cleaning Services Ltd",
 ];
 
 /** Formats E.164 UK numbers for display, e.g. +447776446254 → +44 7776 446254 */
@@ -135,16 +135,17 @@ export const BUSINESS = {
   whatsapp: `https://wa.me/${BUSINESS_TELEPHONE.replace(/\D/g, "")}`,
   email: "info@urbanmovelogistics.co.uk",
   address: {
-    streetAddress: "64B Menzies Rd",
+    streetAddress:
+      "Enterprise Centre Exploration Drive, Aberdeen Science And Energy Park, Bridge Of Don",
     addressLocality: "Aberdeen",
     addressRegion: "Scotland",
-    postalCode: "AB11 9BH",
+    postalCode: "AB23 8GX",
     addressCountry: "GB",
   },
-  /** Approximate coordinates for AB11 9BH (Menzies Rd, Aberdeen). */
+  /** Approximate coordinates for AB23 8GX (Exploration Drive, Bridge of Don). */
   geo: {
-    latitude: 57.136649,
-    longitude: -2.092033,
+    latitude: 57.1848,
+    longitude: -2.0906,
   },
   sameAs: [
     "https://share.google/AHsYcQG5lAIDC5gYW",
