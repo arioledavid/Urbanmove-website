@@ -120,6 +120,7 @@ export async function changePasswordAction(
     data: {
       passwordHash,
       passwordChangedAt: new Date(),
+      mustChangePassword: false,
     },
   });
 

@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
     "admin.localhost",
     "*.lvh.me",
   ],
+  serverExternalPackages: ["cloudinary"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [

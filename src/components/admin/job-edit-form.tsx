@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import type { JobStatus } from "@prisma/client";
 import { AdminToast } from "@/components/admin/admin-toast";
 import { updateJobAction } from "@/lib/actions/jobs";
@@ -16,6 +16,11 @@ import {
   parseOpsDateTimeLocal,
 } from "@/lib/ops-time";
 
+type DriverOption = {
+  id: string;
+  label: string;
+};
+
 type JobEditFormProps = {
   reference: string;
   title: string;
@@ -28,6 +33,10 @@ type JobEditFormProps = {
   addressFrom: string | null;
   addressTo: string | null;
   notes: string | null;
+  assignedStaffIds: string[];
+  driverOptions: DriverOption[];
+  /** False when this environment has no mail provider, so nothing can be delivered. */
+  emailDeliveryConfigured: boolean;
 };
 
 const fieldClassName =
@@ -45,13 +54,23 @@ export function JobEditForm({
   addressFrom,
   addressTo,
   notes,
+  assignedStaffIds,
+  driverOptions,
+  emailDeliveryConfigured,
 }: JobEditFormProps) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [formKey, setFormKey] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [overlapToast, setOverlapToast] = useState<string | null>(null);
+  const [statusValue, setStatusValue] = useState<JobStatus>(status);
+  const [emailValue, setEmailValue] = useState(contactEmail ?? "");
+  const [selectedDriverIds, setSelectedDriverIds] = useState<string[]>(
+    assignedStaffIds,
+  );
+  const [confirmUndelivered, setConfirmUndelivered] = useState(false);
   const [pending, startTransition] = useTransition();
+  const emailInputRef = useRef<HTMLInputElement>(null);
 
   const dismissOverlapToast = useCallback(() => {
     setOverlapToast(null);
@@ -61,13 +80,37 @@ export function JobEditForm({
     (value, index, list) => list.indexOf(value) === index,
   );
 
-  function startEditing() {
+  const trimmedEmail = emailValue.trim();
+  // Codes are generated and mailed on the DRAFT to SCHEDULED transition only.
+  const willIssueCodes = statusValue === "SCHEDULED" && status !== "SCHEDULED";
+  const undeliverableReason = !willIssueCodes
+    ? null
+    : !trimmedEmail
+      ? "This job has no customer email, so the pickup and dropoff codes cannot be sent to anyone."
+      : !emailDeliveryConfigured
+        ? `Email delivery is switched off for this environment, so nothing will reach ${trimmedEmail}.`
+        : null;
+  // Informational only: an admin can run the job themselves without assigning drivers.
+  const noDriversAssigned =
+    willIssueCodes &&
+    !undeliverableReason &&
+    selectedDriverIds.length === 0;
+
+  function resetDraftState() {
     setError(null);
+    setConfirmUndelivered(false);
+    setStatusValue(status);
+    setEmailValue(contactEmail ?? "");
+    setSelectedDriverIds(assignedStaffIds);
+  }
+
+  function startEditing() {
+    resetDraftState();
     setEditing(true);
   }
 
   function cancelEditing() {
-    setError(null);
+    resetDraftState();
     setEditing(false);
     setFormKey((key) => key + 1);
   }
@@ -88,17 +131,28 @@ export function JobEditForm({
       return;
     }
 
+    if (undeliverableReason && !confirmUndelivered) {
+      setConfirmUndelivered(true);
+      return;
+    }
+
     startTransition(async () => {
       const result = await updateJobAction(reference, formData);
       if (!result.success) {
         setError(result.error);
         return;
       }
+      const warningParts: string[] = [];
       if (result.data.overlapWarnings.length > 0) {
-        setOverlapToast(result.data.overlapWarnings.join(", "));
-      } else {
-        setOverlapToast(null);
+        warningParts.push(
+          `This window overlaps: ${result.data.overlapWarnings.join(", ")}.`,
+        );
       }
+      if (result.data.warnings.length > 0) {
+        warningParts.push(...result.data.warnings);
+      }
+      setOverlapToast(warningParts.length > 0 ? warningParts.join(" ") : null);
+      setConfirmUndelivered(false);
       setEditing(false);
       router.refresh();
     });
@@ -167,7 +221,12 @@ export function JobEditForm({
                   id="contactEmail"
                   name="contactEmail"
                   type="email"
-                  defaultValue={contactEmail ?? ""}
+                  ref={emailInputRef}
+                  value={emailValue}
+                  onChange={(event) => {
+                    setEmailValue(event.target.value);
+                    setConfirmUndelivered(false);
+                  }}
                   autoComplete="email"
                   className={fieldClassName}
                 />
@@ -234,7 +293,11 @@ export function JobEditForm({
               <select
                 id="status"
                 name="status"
-                defaultValue={status}
+                value={statusValue}
+                onChange={(event) => {
+                  setStatusValue(event.target.value as JobStatus);
+                  setConfirmUndelivered(false);
+                }}
                 className={fieldClassName}
               >
                 {statusOptions.map((value) => (
@@ -244,6 +307,71 @@ export function JobEditForm({
                 ))}
               </select>
             </div>
+
+            {willIssueCodes ? (
+              undeliverableReason ? (
+                <div
+                  role="status"
+                  className="rounded-md border border-[#F0E0A0] bg-[#FFF8E6] p-3 text-[#8A6D00]"
+                >
+                  <p className="text-sm font-semibold">
+                    {confirmUndelivered
+                      ? "Schedule anyway without sending the codes?"
+                      : "The customer will not receive their codes"}
+                  </p>
+                  <p className="mt-1 text-sm text-pretty">
+                    {undeliverableReason} You can still schedule now, then add
+                    an email and use Resend codes later.
+                  </p>
+                  {confirmUndelivered ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        type="submit"
+                        disabled={pending}
+                        className="inline-flex h-9 items-center rounded-md bg-[#8A6D00] px-3 text-sm font-medium text-paper active:scale-[0.97] disabled:opacity-60"
+                      >
+                        Schedule without codes
+                      </button>
+                      {trimmedEmail ? null : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setConfirmUndelivered(false);
+                            emailInputRef.current?.focus();
+                          }}
+                          className="inline-flex h-9 items-center rounded-md border border-[#8A6D00]/40 px-3 text-sm font-medium active:scale-[0.97]"
+                        >
+                          Add an email
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setConfirmUndelivered(false)}
+                        className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium active:scale-[0.97]"
+                      >
+                        Keep editing
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <div
+                  role="status"
+                  className="rounded-md border border-border bg-surface p-3 text-sm text-muted text-pretty"
+                >
+                  <p>
+                    Saving sends the pickup and dropoff codes to {trimmedEmail}.
+                    You can resend fresh codes later from this job if needed.
+                  </p>
+                  {noDriversAssigned ? (
+                    <p className="mt-1">
+                      No drivers assigned — only admins will see this job in the
+                      field. Assign drivers any time.
+                    </p>
+                  ) : null}
+                </div>
+              )
+            ) : null}
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -274,6 +402,48 @@ export function JobEditForm({
                   className={fieldClassName}
                 />
               </div>
+            </div>
+
+            <div>
+              <input type="hidden" name="assignCrew" value="1" />
+              <label
+                htmlFor="assignedStaffIds"
+                className="mb-1 block text-xs font-medium text-muted"
+              >
+                Assigned drivers
+              </label>
+              {driverOptions.length > 0 ? (
+                <>
+                  <select
+                    id="assignedStaffIds"
+                    name="assignedStaffIds"
+                    multiple
+                    value={selectedDriverIds}
+                    onChange={(event) => {
+                      const next = Array.from(
+                        event.target.selectedOptions,
+                        (option) => option.value,
+                      );
+                      setSelectedDriverIds(next);
+                    }}
+                    size={Math.min(driverOptions.length, 6)}
+                    className="w-full rounded-md border border-border bg-paper px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  >
+                    {driverOptions.map((driver) => (
+                      <option key={driver.id} value={driver.id}>
+                        {driver.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-xs text-subtle">
+                    Hold ⌘ or Ctrl to select multiple drivers.
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm text-muted">
+                  No active drivers. Create one from the Drivers page.
+                </p>
+              )}
             </div>
 
             <div>
@@ -342,6 +512,16 @@ export function JobEditForm({
             <ViewField label="Address from" value={addressFrom || "—"} />
             <ViewField label="Address to" value={addressTo || "—"} />
             <ViewField
+              label="Assigned drivers"
+              value={
+                driverOptions
+                  .filter((driver) => assignedStaffIds.includes(driver.id))
+                  .map((driver) => driver.label)
+                  .join(", ") || "—"
+              }
+              className="sm:col-span-2"
+            />
+            <ViewField
               label="Notes"
               value={notes || "—"}
               className="sm:col-span-2"
@@ -353,12 +533,8 @@ export function JobEditForm({
 
       <AdminToast
         open={Boolean(overlapToast)}
-        title="Schedule overlap"
-        description={
-          overlapToast
-            ? `Saved. This window overlaps: ${overlapToast}.`
-            : ""
-        }
+        title="Saved with a warning"
+        description={overlapToast ? `Saved. ${overlapToast}` : ""}
         tone="warning"
         onClose={dismissOverlapToast}
       />

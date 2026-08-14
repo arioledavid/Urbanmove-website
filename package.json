@@ -7,13 +7,19 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "db:generate": "prisma generate"
+    "test": "npx tsx --test src/lib/job-workflow.test.ts src/lib/admin-access.test.ts",
+    "db:generate": "prisma generate",
+    "db:seed": "npx tsx --env-file=.env prisma/seed.ts"
+  },
+  "prisma": {
+    "seed": "npx tsx --env-file=.env prisma/seed.ts"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.9",
     "@prisma/client": "^6.19.2",
     "@tabler/icons-react": "^3.44.0",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "motion": "^12.41.0",
     "next": "16.2.9",

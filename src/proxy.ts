@@ -1,7 +1,30 @@
 import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import { authConfig } from "@/auth.config";
+import { isDriverAllowedPath } from "@/lib/admin-access";
 import { getAdminOrigin, getHostname, isAdminHost } from "@/lib/hosts";
+
+function redirectDriverIfNeeded(
+  role: string | undefined,
+  pathname: string,
+  requestUrl: string,
+) {
+  if (role !== "DRIVER") return null;
+  if (isDriverAllowedPath(stripAdminPrefix(pathname))) return null;
+  return NextResponse.redirect(new URL("/jobs", requestUrl));
+}
+
+function redirectPasswordChangeIfNeeded(
+  mustChangePassword: boolean | undefined,
+  pathname: string,
+  requestUrl: string,
+) {
+  if (!mustChangePassword) return null;
+  const clean = stripAdminPrefix(pathname);
+  if (clean === "/settings" || clean.startsWith("/settings/")) return null;
+  if (clean === "/login" || clean.startsWith("/login/")) return null;
+  return NextResponse.redirect(new URL("/settings", requestUrl));
+}
 
 const { auth } = NextAuth(authConfig);
 
@@ -52,13 +75,13 @@ export default auth((request) => {
     return NextResponse.next();
   }
 
-  // —— Admin host ——
+  // Admin host
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.next();
   }
 
-  // Already on the internal /admin tree — serve as-is (no clean-URL redirect).
+  // Already on the internal /admin tree, so serve as-is (no clean-URL redirect).
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     const isPublicAdminPath =
       pathname === "/admin/login" || pathname.startsWith("/admin/login/");
@@ -74,6 +97,19 @@ export default auth((request) => {
         );
         return NextResponse.redirect(login);
       }
+      const passwordRedirect = redirectPasswordChangeIfNeeded(
+        session.user.mustChangePassword,
+        pathname,
+        request.url,
+      );
+      if (passwordRedirect) return passwordRedirect;
+
+      const driverRedirect = redirectDriverIfNeeded(
+        session.user.role,
+        pathname,
+        request.url,
+      );
+      if (driverRedirect) return driverRedirect;
     }
 
     return NextResponse.next();
@@ -92,6 +128,19 @@ export default auth((request) => {
       login.searchParams.set("callbackUrl", pathname + search);
       return NextResponse.redirect(login);
     }
+    const passwordRedirect = redirectPasswordChangeIfNeeded(
+      session.user.mustChangePassword,
+      pathname,
+      request.url,
+    );
+    if (passwordRedirect) return passwordRedirect;
+
+    const driverRedirect = redirectDriverIfNeeded(
+      session.user.role,
+      pathname,
+      request.url,
+    );
+    if (driverRedirect) return driverRedirect;
   }
 
   const rewriteUrl = request.nextUrl.clone();

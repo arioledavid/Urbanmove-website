@@ -18,6 +18,7 @@ export type AdminNavItem = {
   href: string;
   icon: ComponentType<SVGProps<SVGSVGElement>>;
   soon?: boolean;
+  adminOnly?: boolean;
   section: "Overview" | "Operations" | "Commercial" | "Fleet & people" | "System";
 };
 
@@ -62,10 +63,10 @@ export const ADMIN_NAV: AdminNavItem[] = [
     section: "Commercial",
   },
   {
-    label: "Staff",
-    href: "/staff",
+    label: "Drivers",
+    href: "/drivers",
     icon: IconUserCog,
-    soon: true,
+    adminOnly: true,
     section: "Fleet & people",
   },
   {

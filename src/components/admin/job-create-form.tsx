@@ -140,7 +140,7 @@ export function JobCreateForm() {
             <input
               id="title"
               name="title"
-              placeholder="Defaults to service — contact name"
+              placeholder="Defaults to service - contact name"
               className={fieldClassName}
             />
           </div>

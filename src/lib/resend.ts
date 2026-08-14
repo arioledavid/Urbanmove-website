@@ -2,6 +2,11 @@ import { Resend } from "resend";
 
 let resendClient: Resend | null = null;
 
+/** Server-only check so the UI can warn before an action that depends on email. */
+export function isEmailDeliveryConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY);
+}
+
 export function getResendClient(): Resend {
   const apiKey = process.env.RESEND_API_KEY;
 

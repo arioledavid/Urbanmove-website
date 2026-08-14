@@ -9,7 +9,7 @@ datasource db {
 
 enum Role {
   ADMIN
-  STAFF
+  DRIVER
 }
 
 enum ServiceType {
@@ -39,15 +39,16 @@ enum ActivityType {
 }
 
 model User {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  email             String   @unique
-  name              String?
-  passwordHash      String?
-  role              Role     @default(STAFF)
-  active            Boolean  @default(true)
-  passwordChangedAt DateTime @default(now())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  email              String   @unique
+  name               String?
+  passwordHash       String?
+  role               Role     @default(DRIVER)
+  active             Boolean  @default(true)
+  mustChangePassword Boolean  @default(false)
+  passwordChangedAt  DateTime @default(now())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   activities Activity[] @relation("ActivityActor")
 }
@@ -71,8 +72,20 @@ model Job {
   notes       String?
 
   /// Temporary staff assignment until Phase 3 introduces a StaffAssignment relation model.
-  /// Will be replaced — do not build UI that assumes this shape is permanent.
+  /// Will be replaced, so do not build UI that assumes this shape is permanent.
   assignedStaffIds String[] @db.ObjectId
+
+  pickupCodeHash        String?
+  dropoffCodeHash       String?
+  pickupVerifiedAt      DateTime?
+  pickedUpAt            DateTime?
+  dropoffVerifiedAt     DateTime?
+  droppedOffAt          DateTime?
+  actualDurationMinutes Int?
+  pickupNotes           String?
+  dropoffNotes          String?
+  pickupPhotos          JobPhoto[]
+  dropoffPhotos         JobPhoto[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,6 +93,12 @@ model Job {
   @@index([scheduledStart, scheduledEnd])
   @@index([status, scheduledStart])
   @@index([contactEmail])
+}
+
+type JobPhoto {
+  url       String
+  publicId  String
+  createdAt DateTime @default(now())
 }
 
 model Activity {

@@ -3,7 +3,7 @@ import type { Role } from "@prisma/client";
 
 /**
  * Proxy-safe Auth.js config (ADR 002).
- * No Prisma, no bcrypt, no Credentials authorize — JWT decode/validate only.
+ * No Prisma, no bcrypt, no Credentials authorize. JWT decode and validate only.
  */
 export const authConfig = {
   pages: {
@@ -31,6 +31,7 @@ export const authConfig = {
         session.user.email = typeof token.email === "string" ? token.email : "";
         session.user.role = token.role as Role;
         session.user.active = token.active !== false;
+        session.user.mustChangePassword = token.mustChangePassword === true;
       }
       return session;
     },

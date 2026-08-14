@@ -3,8 +3,12 @@ import type { JobStatus } from "@prisma/client";
 import { JobStatusFilter } from "@/components/admin/job-status-filter";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge, jobStatusTone } from "@/components/admin/status-badge";
+import { canManageJobs } from "@/lib/admin-access";
+import { requireActiveSession } from "@/lib/admin-session";
 import {
   formatAdminDateTime,
+  jobDisplayEnd,
+  jobDisplayStart,
   JOB_STATUS_LABELS,
   SERVICE_TYPE_LABELS,
 } from "@/lib/admin-format";
@@ -26,11 +30,18 @@ type JobsPageProps = {
 };
 
 export default async function JobsPage({ searchParams }: JobsPageProps) {
+  const actor = await requireActiveSession();
+  const isOps = actor.success && canManageJobs(actor.data.role);
+
   const params = await searchParams;
   const statusParam = (params.status ?? "ALL") as JobStatus | "ALL";
   const status = FILTER_STATUSES.includes(statusParam) ? statusParam : "ALL";
 
-  const result = await jobService.list({ status });
+  const result = await jobService.list({
+    status,
+    assignedStaffId:
+      actor.success && !isOps ? actor.data.id : undefined,
+  });
   const jobs = result.success ? result.data : [];
   const unscheduled = jobs.filter((job) => !job.scheduledStart);
   const scheduled = jobs.filter((job) => job.scheduledStart);
@@ -39,14 +50,20 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
     <div>
       <PageHeader
         title="Jobs"
-        description="Scheduled work. Unscheduled jobs need dispatcher attention — set start/end to appear on the calendar."
+        description={
+          isOps
+            ? "Scheduled work. Unscheduled jobs need dispatcher attention, so set start and end to make them appear on the calendar."
+            : "Jobs assigned to you. Record pickup and drop-off from the job screen."
+        }
         actions={
-          <Link
-            href="/jobs/new"
-            className="inline-flex h-9 items-center justify-center rounded-md bg-ink px-3 text-sm font-medium text-paper transition-transform duration-150 ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary-hover"
-          >
-            Create job
-          </Link>
+          isOps ? (
+            <Link
+              href="/jobs/new"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-ink px-3 text-sm font-medium text-paper transition-transform duration-150 ease-out active:scale-[0.97] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-secondary-hover"
+            >
+              Create job
+            </Link>
+          ) : null
         }
       />
 
@@ -60,11 +77,20 @@ export default async function JobsPage({ searchParams }: JobsPageProps) {
         </p>
       ) : jobs.length === 0 ? (
         <div className="rounded-lg border border-border bg-paper px-4 py-10 text-sm text-muted">
-          No jobs yet.{" "}
-          <Link href="/jobs/new" className="font-medium text-primary hover:underline">
-            Create a job
-          </Link>{" "}
-          from a converted email lead.
+          {isOps ? (
+            <>
+              No jobs yet.{" "}
+              <Link
+                href="/jobs/new"
+                className="font-medium text-primary hover:underline"
+              >
+                Create a job
+              </Link>{" "}
+              from a converted email lead.
+            </>
+          ) : (
+            "No jobs assigned to you yet."
+          )}
         </div>
       ) : (
         <div className="space-y-6">
@@ -104,6 +130,8 @@ type JobRow = {
   serviceType: keyof typeof SERVICE_TYPE_LABELS;
   scheduledStart: Date | null;
   scheduledEnd: Date | null;
+  pickedUpAt: Date | null;
+  droppedOffAt: Date | null;
 };
 
 function JobsList({ jobs }: { jobs: JobRow[] }) {
@@ -137,13 +165,13 @@ function JobsList({ jobs }: { jobs: JobRow[] }) {
                 <div>
                   <dt className="text-muted">Start</dt>
                   <dd className="text-ink">
-                    {formatAdminDateTime(job.scheduledStart)}
+                    {formatAdminDateTime(jobDisplayStart(job))}
                   </dd>
                 </div>
                 <div className="col-span-2">
                   <dt className="text-muted">End</dt>
                   <dd className="text-ink">
-                    {formatAdminDateTime(job.scheduledEnd)}
+                    {formatAdminDateTime(jobDisplayEnd(job))}
                   </dd>
                 </div>
               </dl>
@@ -191,10 +219,10 @@ function JobsList({ jobs }: { jobs: JobRow[] }) {
                   {SERVICE_TYPE_LABELS[job.serviceType]}
                 </td>
                 <td className="px-4 py-3 text-muted">
-                  {formatAdminDateTime(job.scheduledStart)}
+                  {formatAdminDateTime(jobDisplayStart(job))}
                 </td>
                 <td className="px-4 py-3 text-muted">
-                  {formatAdminDateTime(job.scheduledEnd)}
+                  {formatAdminDateTime(jobDisplayEnd(job))}
                 </td>
               </tr>
             ))}

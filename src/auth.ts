@@ -88,6 +88,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           role: user.role,
           active: user.active,
+          mustChangePassword: user.mustChangePassword,
         };
       },
     }),
@@ -100,6 +101,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.email = user.email;
         token.role = user.role as Role;
         token.active = user.active;
+        token.mustChangePassword = user.mustChangePassword === true;
         return token;
       }
 
@@ -110,6 +112,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: true,
             role: true,
             active: true,
+            mustChangePassword: true,
             passwordChangedAt: true,
           },
         });
@@ -135,6 +138,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.email = dbUser.email;
         token.role = dbUser.role;
         token.active = dbUser.active;
+        token.mustChangePassword = dbUser.mustChangePassword;
       }
 
       return token;
@@ -146,6 +150,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: typeof token.email === "string" ? token.email : "",
         role: token.role as Role,
         active: token.active !== false,
+        mustChangePassword: token.mustChangePassword === true,
       };
       return session;
     },
