@@ -174,14 +174,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               <dd className="text-sm text-ink">{job.contactName}</dd>
             </div>
             <div>
-              <dt className="mb-1 text-xs font-medium text-muted">Email</dt>
-              <dd className="text-sm text-ink">{job.contactEmail || "—"}</dd>
-            </div>
-            <div>
-              <dt className="mb-1 text-xs font-medium text-muted">Phone</dt>
-              <dd className="text-sm text-ink">{job.contactPhone || "—"}</dd>
-            </div>
-            <div>
               <dt className="mb-1 text-xs font-medium text-muted">From</dt>
               <dd className="text-sm text-ink">{job.addressFrom || "—"}</dd>
             </div>
@@ -199,12 +191,6 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
               <dt className="mb-1 text-xs font-medium text-muted">End</dt>
               <dd className="text-sm text-ink">
                 {formatAdminDateTime(jobDisplayEnd(job))}
-              </dd>
-            </div>
-            <div className="sm:col-span-2">
-              <dt className="mb-1 text-xs font-medium text-muted">Notes</dt>
-              <dd className="whitespace-pre-wrap text-sm text-ink">
-                {job.notes || "—"}
               </dd>
             </div>
           </dl>
