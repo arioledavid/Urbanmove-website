@@ -193,6 +193,12 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
                 {formatAdminDateTime(jobDisplayEnd(job))}
               </dd>
             </div>
+            <div className="sm:col-span-2">
+              <dt className="mb-1 text-xs font-medium text-muted">Notes</dt>
+              <dd className="whitespace-pre-wrap text-sm text-ink">
+                {job.notes || "—"}
+              </dd>
+            </div>
           </dl>
         </section>
       )}
