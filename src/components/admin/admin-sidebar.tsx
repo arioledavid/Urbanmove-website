@@ -32,6 +32,7 @@ export function AdminSidebar({
   userRole,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const isDriver = userRole === "DRIVER";
   const settingsItem = ADMIN_NAV.find((item) => item.href === "/settings");
   const settingsActive = isActive(pathname, "/settings");
   const SettingsIcon = settingsItem?.icon;
@@ -64,13 +65,13 @@ export function AdminSidebar({
       >
         <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4 sm:h-16">
           <Link
-            href="/dashboard"
+            href={isDriver ? "/jobs" : "/dashboard"}
             onClick={onClose}
             className="flex min-w-0 items-center gap-2 active:scale-[0.97] active:transition-transform active:duration-150"
           >
             <Logo className="h-9 w-auto sm:h-10" />
             <span className="text-sm font-semibold tracking-tight text-ink">
-              Admin
+              {isDriver ? "Crew" : "Admin"}
             </span>
           </Link>
           <button
@@ -89,7 +90,9 @@ export function AdminSidebar({
               (item) =>
                 item.section === section &&
                 !item.soon &&
-                item.href !== "/settings",
+                item.href !== "/settings" &&
+                (!item.adminOnly || !isDriver) &&
+                (!isDriver || item.href === "/jobs"),
             );
             if (items.length === 0) return null;
 

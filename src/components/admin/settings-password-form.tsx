@@ -72,7 +72,7 @@ export function SettingsPasswordForm() {
           setError(result.error);
         }
       } catch (err) {
-        // NEXT_REDIRECT from signOut is expected — browser navigates to login
+        // NEXT_REDIRECT from signOut is expected, the browser navigates to login
         const digest =
           err && typeof err === "object" && "digest" in err
             ? String((err as { digest?: unknown }).digest)

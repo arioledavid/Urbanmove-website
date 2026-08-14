@@ -8,6 +8,7 @@ declare module "next-auth" {
       email: string;
       role: Role;
       active: boolean;
+      mustChangePassword: boolean;
     } & Omit<DefaultSession["user"], "name" | "image" | "email">;
   }
 
@@ -16,6 +17,7 @@ declare module "next-auth" {
     email: string;
     role: Role;
     active: boolean;
+    mustChangePassword: boolean;
   }
 }
 
@@ -25,5 +27,6 @@ declare module "next-auth/jwt" {
     email: string;
     role: Role;
     active: boolean;
+    mustChangePassword: boolean;
   }
 }

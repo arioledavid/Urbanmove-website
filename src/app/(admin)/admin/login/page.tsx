@@ -14,7 +14,10 @@ type LoginPageProps = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await auth();
   if (session?.user?.active) {
-    redirect("/dashboard");
+    if (session.user.mustChangePassword) {
+      redirect("/settings");
+    }
+    redirect(session.user.role === "DRIVER" ? "/jobs" : "/dashboard");
   }
 
   const params = await searchParams;

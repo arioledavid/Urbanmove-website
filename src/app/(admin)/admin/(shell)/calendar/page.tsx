@@ -174,8 +174,8 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
 
       <p className="mt-3 text-xs text-subtle text-pretty">
         Tap a day to open its job list. Days with more than one job are
-        highlighted. Overlaps are warnings, not hard blocks — different crews
-        may run in parallel.
+        highlighted. Overlaps are warnings, not hard blocks, because different
+        crews may run in parallel.
       </p>
     </div>
   );

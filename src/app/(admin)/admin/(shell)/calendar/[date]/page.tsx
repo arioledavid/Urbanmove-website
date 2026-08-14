@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge, jobStatusTone } from "@/components/admin/status-badge";
 import {
   formatAdminDateTime,
+  jobDisplayEnd,
+  jobDisplayStart,
   JOB_STATUS_LABELS,
   SERVICE_TYPE_LABELS,
 } from "@/lib/admin-format";
@@ -122,13 +124,13 @@ export default async function CalendarDayPage({ params }: CalendarDayPageProps) 
                     <div>
                       <dt className="text-muted">Start</dt>
                       <dd className="text-ink">
-                        {formatAdminDateTime(job.scheduledStart)}
+                        {formatAdminDateTime(jobDisplayStart(job))}
                       </dd>
                     </div>
                     <div className="col-span-2">
                       <dt className="text-muted">End</dt>
                       <dd className="text-ink">
-                        {formatAdminDateTime(job.scheduledEnd)}
+                        {formatAdminDateTime(jobDisplayEnd(job))}
                       </dd>
                     </div>
                   </dl>
@@ -178,10 +180,10 @@ export default async function CalendarDayPage({ params }: CalendarDayPageProps) 
                       {SERVICE_TYPE_LABELS[job.serviceType]}
                     </td>
                     <td className="px-4 py-3 text-muted">
-                      {formatAdminDateTime(job.scheduledStart)}
+                      {formatAdminDateTime(jobDisplayStart(job))}
                     </td>
                     <td className="px-4 py-3 text-muted">
-                      {formatAdminDateTime(job.scheduledEnd)}
+                      {formatAdminDateTime(jobDisplayEnd(job))}
                     </td>
                   </tr>
                 ))}
