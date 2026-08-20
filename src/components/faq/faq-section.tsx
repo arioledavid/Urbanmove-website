@@ -44,11 +44,11 @@ const PANEL_TRANSITION = {
   ease: PREMIUM_EASE,
 } as const;
 
-function getFaqJsonLd() {
+function getFaqJsonLd(items: FaqItem[]) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQ_ITEMS.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: {
@@ -158,16 +158,17 @@ function FaqAccordionItem({ item, content }: FaqAccordionItemProps) {
 
 type FaqSectionProps = {
   className?: string;
+  items?: FaqItem[];
 };
 
-export function FaqSection({ className }: FaqSectionProps) {
+export function FaqSection({ className, items = FAQ_ITEMS }: FaqSectionProps) {
   return (
     <section
       id="faq"
       className={cn("bg-surface py-16 sm:py-20 lg:py-24", className)}
       aria-labelledby="faq-heading"
     >
-      <JsonLd data={getFaqJsonLd()} />
+      <JsonLd data={getFaqJsonLd(items)} />
 
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
         <SectionHeader
@@ -178,7 +179,7 @@ export function FaqSection({ className }: FaqSectionProps) {
         />
 
         <PageStagger className="mx-auto max-w-3xl border-t border-border">
-          {FAQ_ITEMS.map((item) => (
+          {items.map((item) => (
             <FaqAccordionItem
               key={item.id}
               item={item}

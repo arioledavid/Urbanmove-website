@@ -1,3 +1,5 @@
+import { CLEANING_HUB } from "@/lib/cleaning-services-data";
+
 export const SERVICES_DATA = {
   "house-office-removals": {
     title: "House & Office Removals in Aberdeen",
@@ -399,8 +401,31 @@ export type ServiceLink = {
   image: string;
 };
 
+const CLEANING_LINK: ServiceLink = {
+  label: CLEANING_HUB.title,
+  href: CLEANING_HUB.href,
+  description: CLEANING_HUB.navDescription,
+  image: CLEANING_HUB.image,
+};
+
+function insertCleaningLink(links: ServiceLink[]): ServiceLink[] {
+  const insertAfterIndex = links.findIndex(
+    (link) => link.href === "/services/household-waste-clearance",
+  );
+
+  if (insertAfterIndex === -1) {
+    return [...links, CLEANING_LINK];
+  }
+
+  return [
+    ...links.slice(0, insertAfterIndex + 1),
+    CLEANING_LINK,
+    ...links.slice(insertAfterIndex + 1),
+  ];
+}
+
 export function getServiceLinks(order: ServiceSlug[] = NAV_SERVICE_ORDER): ServiceLink[] {
-  return order.map((slug) => {
+  const flatLinks = order.map((slug) => {
     const service = SERVICES_DATA[slug];
     return {
       label: service.title,
@@ -409,12 +434,14 @@ export function getServiceLinks(order: ServiceSlug[] = NAV_SERVICE_ORDER): Servi
       image: service.image,
     };
   });
+
+  return insertCleaningLink(flatLinks);
 }
 
 export const SERVICE_LINKS = getServiceLinks();
 
 export function getHomeStickyScrollContent() {
-  return HOME_SERVICE_ORDER.map((slug) => {
+  const items = HOME_SERVICE_ORDER.map((slug) => {
     const service = SERVICES_DATA[slug];
     return {
       title: service.title,
@@ -424,8 +451,33 @@ export function getHomeStickyScrollContent() {
       imageAlt: service.imageAlt,
     };
   });
+
+  const insertAt =
+    HOME_SERVICE_ORDER.indexOf("household-waste-clearance") + 1;
+
+  const cleaningItem = {
+    title: CLEANING_HUB.title,
+    tagline: CLEANING_HUB.subtitle,
+    description: CLEANING_HUB.heroDescription,
+    image: CLEANING_HUB.image,
+    imageAlt: CLEANING_HUB.imageAlt,
+  };
+
+  return [
+    ...items.slice(0, insertAt),
+    cleaningItem,
+    ...items.slice(insertAt),
+  ];
 }
 
 export function getHomeHeroServiceTitles(): string[] {
-  return HOME_SERVICE_ORDER.map((slug) => SERVICES_DATA[slug].title);
+  const titles = HOME_SERVICE_ORDER.map((slug) => SERVICES_DATA[slug].title);
+  const insertAt =
+    HOME_SERVICE_ORDER.indexOf("household-waste-clearance") + 1;
+
+  return [
+    ...titles.slice(0, insertAt),
+    CLEANING_HUB.title,
+    ...titles.slice(insertAt),
+  ];
 }

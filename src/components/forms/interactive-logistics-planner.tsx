@@ -3,6 +3,11 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { RemovalItemsTagInput } from "@/components/forms/removal-items-tag-input";
+import {
+  CLEANING_TYPE_OPTIONS,
+  getContactContextFromServiceSlug,
+  type CleaningServiceSlug,
+} from "@/lib/cleaning-services-data";
 import { getPlannerServiceFromSlug } from "@/lib/services-data";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +21,7 @@ const SERVICES = [
   // { id: "cargo", label: "Cargo Services" },
   { id: "removal", label: "Removal Services" },
   { id: "courier", label: "Courier Service" },
+  { id: "cleaning", label: "Cleaning Services" },
 ] as const;
 
 const FLOOR_OPTIONS = [
@@ -98,6 +104,11 @@ type FormState = {
   deliveryPostcode: string;
   parcelDescription: string;
   courierDateTime: string;
+  cleaningType: CleaningServiceSlug | "";
+  cleaningPostcode: string;
+  cleaningPropertyType: string;
+  cleaningDate: string;
+  cleaningNotes: string;
   gdprConsent: boolean;
 };
 
@@ -135,6 +146,11 @@ const INITIAL_FORM_STATE: FormState = {
   deliveryPostcode: "",
   parcelDescription: "",
   courierDateTime: "",
+  cleaningType: "",
+  cleaningPostcode: "",
+  cleaningPropertyType: "",
+  cleaningDate: "",
+  cleaningNotes: "",
   gdprConsent: false,
 };
 
@@ -164,6 +180,13 @@ const SERVICE_FIELD_KEYS: Record<ServiceId, (keyof FormState)[]> = {
     "deliveryPostcode",
     "parcelDescription",
     "courierDateTime",
+  ],
+  cleaning: [
+    "cleaningType",
+    "cleaningPostcode",
+    "cleaningPropertyType",
+    "cleaningDate",
+    "cleaningNotes",
   ],
 };
 
@@ -203,6 +226,10 @@ function validateForm(form: FormState): FormErrors {
 
   if (!form.service) {
     errors.service = "Please select a service to continue.";
+  }
+
+  if (form.service === "cleaning" && !form.cleaningType) {
+    errors.cleaningType = "Please select a cleaning type.";
   }
 
   if (!form.gdprConsent) {
@@ -583,6 +610,153 @@ function ConditionalSection({
   );
 }
 
+type CleaningFieldsProps = {
+  form: FormState;
+  formId: string;
+  updateField: <K extends keyof FormState>(
+    key: K,
+    value: FormState[K],
+  ) => void;
+  clearError: (key: keyof FormErrors) => void;
+  errors: FormErrors;
+  dateTimeClasses: string;
+};
+
+function CleaningFields({
+  form,
+  formId,
+  updateField,
+  clearError,
+  errors,
+  dateTimeClasses,
+}: CleaningFieldsProps) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <>
+      <fieldset>
+        <legend className={labelClasses}>
+          Cleaning type<span className="text-primary"> *</span>
+        </legend>
+        <div
+          className="flex flex-wrap gap-2"
+          role="group"
+          aria-describedby={
+            errors.cleaningType ? `${formId}-cleaning-type-error` : undefined
+          }
+        >
+          {CLEANING_TYPE_OPTIONS.map((option) => {
+            const isActive = form.cleaningType === option.id;
+
+            return (
+              <button
+                key={option.id}
+                id={`${formId}-cleaning-type-${option.id}`}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => {
+                  updateField("cleaningType", option.id);
+                  clearError("cleaningType");
+                }}
+                className={cn(
+                  "min-h-11 rounded-full border px-4 py-2.5 text-sm font-medium transition-all duration-200 active:scale-[0.97]",
+                  isActive
+                    ? "border-primary bg-primary/10 text-ink"
+                    : errors.cleaningType
+                      ? "border-primary/60 bg-surface text-muted hover:border-primary hover:text-ink"
+                      : "border-border bg-surface text-muted hover:border-muted hover:text-ink",
+                )}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+        {errors.cleaningType ? (
+          <p
+            id={`${formId}-cleaning-type-error`}
+            role="alert"
+            className="mt-2 text-sm text-primary"
+          >
+            {errors.cleaningType}
+          </p>
+        ) : null}
+      </fieldset>
+
+      <AnimatePresence mode="wait">
+        {form.cleaningType ? (
+          <motion.div
+            key={form.cleaningType}
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={SECTION_TRANSITION}
+            className="space-y-5"
+          >
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Property postcode" htmlFor="cleaningPostcode">
+                <input
+                  id="cleaningPostcode"
+                  type="text"
+                  value={form.cleaningPostcode}
+                  onChange={(event) =>
+                    updateField("cleaningPostcode", event.target.value)
+                  }
+                  className={inputClasses()}
+                  placeholder="e.g. AB10 1AB"
+                />
+              </Field>
+
+              <Field label="Property type" htmlFor="cleaningPropertyType">
+                <select
+                  id="cleaningPropertyType"
+                  value={form.cleaningPropertyType}
+                  onChange={(event) =>
+                    updateField("cleaningPropertyType", event.target.value)
+                  }
+                  className={inputClasses()}
+                >
+                  <option value="">Select property type</option>
+                  {PROPERTY_TYPE_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+
+            <Field label="Preferred date" htmlFor="cleaningDate">
+              <input
+                id="cleaningDate"
+                type="date"
+                value={form.cleaningDate}
+                onChange={(event) =>
+                  updateField("cleaningDate", event.target.value)
+                }
+                className={dateTimeClasses}
+              />
+            </Field>
+
+            <Field label="Anything we should know?" htmlFor="cleaningNotes">
+              <textarea
+                id="cleaningNotes"
+                rows={4}
+                value={form.cleaningNotes}
+                onChange={(event) =>
+                  updateField("cleaningNotes", event.target.value)
+                }
+                className={cn(inputClasses(), "resize-none")}
+                placeholder="Property size, access notes, checklist requirements, or recurring schedule"
+              />
+            </Field>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </>
+  );
+}
+
 type RemovalFieldsProps = {
   form: FormState;
   formId: string;
@@ -912,21 +1086,47 @@ type InteractiveLogisticsPlannerProps = {
   initialServiceSlug?: string;
 };
 
+function resolveInitialFormState(initialServiceSlug?: string): FormState {
+  if (initialServiceSlug === "cleaning") {
+    return {
+      ...INITIAL_FORM_STATE,
+      service: "cleaning",
+    };
+  }
+
+  const cleaningContext = initialServiceSlug
+    ? getContactContextFromServiceSlug(initialServiceSlug)
+    : null;
+
+  if (cleaningContext) {
+    return {
+      ...INITIAL_FORM_STATE,
+      service: "cleaning",
+      cleaningType: cleaningContext.cleaningSlug,
+    };
+  }
+
+  const rawInitialService = initialServiceSlug
+    ? getPlannerServiceFromSlug(initialServiceSlug)
+    : null;
+  const initialPlannerService =
+    rawInitialService === "cargo" ? null : rawInitialService;
+
+  return {
+    ...INITIAL_FORM_STATE,
+    service: initialPlannerService,
+  };
+}
+
 export function InteractiveLogisticsPlanner({
   initialServiceSlug,
 }: InteractiveLogisticsPlannerProps = {}) {
   const reduceMotion = useReducedMotion();
   const formId = useId();
   const statusRef = useRef<HTMLDivElement>(null);
-  const rawInitialService = initialServiceSlug
-    ? getPlannerServiceFromSlug(initialServiceSlug)
-    : null;
-  const initialPlannerService =
-    rawInitialService === "cargo" ? null : rawInitialService;
-  const [form, setForm] = useState<FormState>(() => ({
-    ...INITIAL_FORM_STATE,
-    service: initialPlannerService,
-  }));
+  const [form, setForm] = useState<FormState>(() =>
+    resolveInitialFormState(initialServiceSlug),
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [statusMessage, setStatusMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -962,6 +1162,7 @@ export function InteractiveLogisticsPlanner({
       return next;
     });
     clearError("service");
+    clearError("cleaningType");
   };
 
   const focusFirstError = (nextErrors: FormErrors) => {
@@ -970,15 +1171,19 @@ export function InteractiveLogisticsPlanner({
       "email",
       "contactNumber",
       "service",
+      "cleaningType",
       "gdprConsent",
     ];
     const firstKey = order.find((key) => nextErrors[key]);
     if (!firstKey) return;
 
     if (firstKey === "service") {
-      document
-        .getElementById(`${formId}-service-removal`)
-        ?.focus();
+      document.getElementById(`${formId}-service-removal`)?.focus();
+      return;
+    }
+
+    if (firstKey === "cleaningType") {
+      document.getElementById(`${formId}-cleaning-type-end-of-tenancy-cleaning`)?.focus();
       return;
     }
 
@@ -1331,6 +1536,17 @@ export function InteractiveLogisticsPlanner({
                   className={dateTimeClasses}
                 />
               </Field>
+            </ConditionalSection>
+
+            <ConditionalSection serviceKey="cleaning" activeService={form.service}>
+              <CleaningFields
+                form={form}
+                formId={formId}
+                updateField={updateField}
+                clearError={clearError}
+                errors={errors}
+                dateTimeClasses={dateTimeClasses}
+              />
             </ConditionalSection>
           </motion.div>
         ) : null}

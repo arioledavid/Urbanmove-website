@@ -15,7 +15,7 @@ const ABOUT_HERO_IMAGE_ALT =
 const HEADLINE = "About UrbanMove Removals Man and Van Cleaning Services Ltd";
 
 const INTRO =
-  "UrbanMove Removals Man and Van Cleaning Services Ltd is Aberdeen's trusted man and van and removal company, providing affordable, reliable, and professional moving services across Aberdeen and throughout the UK. We specialise in house removals, office relocations, house clearance, skip hire, furniture collection and delivery, packing services, furniture assembly and dismantling, courier and logistics, local parcel delivery, student moves, and same-day transport solutions. Whether you need a single item moved or a full house relocation, our experienced team and fleet of vans deliver a fast, safe, and stress-free service at competitive prices.";
+  "UrbanMove Removals Man and Van Cleaning Services Ltd is Aberdeen's trusted man and van and removal company, providing affordable, reliable, and professional moving services across Aberdeen and throughout the UK. We specialise in house removals, office relocations, house clearance, cleaning services, skip hire, furniture collection and delivery, packing services, furniture assembly and dismantling, courier and logistics, local parcel delivery, student moves, and same-day transport solutions. Whether you need a single item moved or a full house relocation, our experienced team and fleet of vans deliver a fast, safe, and stress-free service at competitive prices.";
 
 export function AboutHeroSection() {
   const reduceMotion = useReducedMotion();

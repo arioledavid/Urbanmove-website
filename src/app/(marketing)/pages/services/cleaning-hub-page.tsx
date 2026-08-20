@@ -1,54 +1,52 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FaqSection } from "@/components/faq/faq-section";
-import { JsonLd } from "@/components/seo/json-ld";
-import { getBreadcrumbJsonLd } from "@/lib/seo";
-import { getServiceLinks } from "@/lib/services-data";
+import {
+  CLEANING_HUB,
+  CLEANING_NAV_ORDER,
+  CLEANING_SERVICES,
+} from "@/lib/cleaning-services-data";
 
-export default function ServicesIndexPage() {
+export default function CleaningHubPage() {
   return (
     <main className="flex flex-1 flex-col bg-paper font-sans">
-      <JsonLd
-        data={getBreadcrumbJsonLd([
-          { name: "Home", path: "/" },
-          { name: "Services", path: "/services" },
-        ])}
-      />
       <section
         className="border-b border-border bg-paper pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pt-36 lg:pb-20"
-        aria-labelledby="services-index-heading"
+        aria-labelledby="cleaning-hub-heading"
       >
         <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16">
           <p className="text-sm font-medium tracking-[0.08em] text-primary uppercase">
-            Our services
+            Service category
           </p>
           <h1
-            id="services-index-heading"
+            id="cleaning-hub-heading"
             className="mt-3 max-w-2xl text-[clamp(2rem,5vw,3.25rem)] leading-[1.1] font-semibold tracking-[-0.03em] text-ink text-balance"
           >
-            Logistics built around you
+            {CLEANING_HUB.title}
           </h1>
+          <p className="mt-5 max-w-2xl text-xl leading-snug font-medium tracking-tight text-primary sm:text-2xl text-pretty">
+            {CLEANING_HUB.subtitle}
+          </p>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg text-pretty">
-            Removals, man and van, storage, furniture delivery, waste clearance,
-            cleaning, student moves, cargo freight and same-day courier in Aberdeen
-            with UK-wide coverage when you need it. Choose a service to learn more
-            or get a quote.
+            {CLEANING_HUB.heroDescription}
           </p>
         </div>
       </section>
 
-      <section className="py-16 sm:py-20 lg:py-24" aria-label="Service listings">
+      <section className="py-16 sm:py-20 lg:py-24" aria-label="Cleaning services">
         <div className="mx-auto grid max-w-6xl gap-6 px-6 sm:grid-cols-2 sm:px-10 lg:px-16">
-          {getServiceLinks().map((service) => (
+          {CLEANING_NAV_ORDER.map((slug) => {
+            const service = CLEANING_SERVICES[slug];
+
+            return (
               <Link
-                key={service.href}
-                href={service.href}
+                key={slug}
+                href={`/services/cleaning/${slug}`}
                 className="group overflow-hidden rounded-2xl border border-border bg-surface transition-colors duration-200 hover:border-primary/30"
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <Image
                     src={service.image}
-                    alt={service.label}
+                    alt={service.imageAlt}
                     fill
                     sizes="(max-width: 640px) 100vw, 50vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
@@ -60,10 +58,10 @@ export default function ServicesIndexPage() {
                 </div>
                 <div className="p-6">
                   <h2 className="text-lg font-semibold tracking-tight text-ink">
-                    {service.label}
+                    {service.title}
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted text-pretty">
-                    {service.description}
+                    {service.navDescription}
                   </p>
                   <p className="mt-4 text-sm font-medium text-primary">
                     Learn more
@@ -71,11 +69,10 @@ export default function ServicesIndexPage() {
                   </p>
                 </div>
               </Link>
-            ))}
+            );
+          })}
         </div>
       </section>
-
-      <FaqSection className="bg-paper" />
     </main>
   );
 }

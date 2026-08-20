@@ -54,4 +54,22 @@ export const FAQ_ITEMS: FaqItem[] = [
     answer:
       "Yes. UrbanMove Removals Man and Van Cleaning Services Ltd works weekends and holidays where it suits your schedule. Spaces can be limited at busy times, so booking ahead helps lock in your preferred slot.",
   },
+  {
+    id: "cleaning-areas",
+    question: "What areas of Aberdeen do you cover for cleaning?",
+    answer:
+      "We cover Aberdeen and the surrounding area, including Bridge of Don, Dyce, Westhill, and nearby towns. Contact us with your postcode and we will confirm availability for your property.",
+  },
+  {
+    id: "cleaning-insured",
+    question: "Are your cleaners insured?",
+    answer:
+      "Yes. Our cleaning teams are fully insured, giving you peace of mind whether we are working in your home, rental property, or workplace.",
+  },
+  {
+    id: "cleaning-recurring",
+    question: "Can I book a recurring clean?",
+    answer:
+      "Yes. We offer weekly, fortnightly, and contract cleaning for residential and commercial clients. Tell us your preferred schedule when you request a quote and we will build a plan around it.",
+  },
 ];
