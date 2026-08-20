@@ -1,4 +1,5 @@
 import { EMAIL_BRAND } from "@/lib/emails/brand-tokens";
+import { getCleaningTypeLabel } from "@/lib/cleaning-services-data";
 import {
   QUOTE_SERVICE_LABELS,
   type QuoteRequestPayload,
@@ -125,6 +126,19 @@ function buildServiceDetails(payload: QuoteRequestPayload): Array<[string, strin
         ["Delivery postcode", formatValue(payload.deliveryPostcode)],
         ["Parcel description", formatValue(payload.parcelDescription)],
         ["Preferred date & time", formatDateTime(payload.courierDateTime)],
+      ];
+    case "cleaning":
+      return [
+        [
+          "Cleaning type",
+          formatValue(
+            getCleaningTypeLabel(payload.cleaningType) ?? payload.cleaningType,
+          ),
+        ],
+        ["Property postcode", formatValue(payload.cleaningPostcode)],
+        ["Property type", formatValue(payload.cleaningPropertyType)],
+        ["Preferred date", formatDate(payload.cleaningDate)],
+        ["Notes", formatValue(payload.cleaningNotes)],
       ];
   }
 }

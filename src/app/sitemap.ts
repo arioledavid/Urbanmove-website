@@ -1,4 +1,8 @@
 import type { MetadataRoute } from "next";
+import {
+  CLEANING_HUB,
+  CLEANING_SERVICE_SLUGS,
+} from "@/lib/cleaning-services-data";
 import { NAV_SERVICE_ORDER } from "@/lib/services-data";
 import { SITE_URL, SITEMAP_LAST_MODIFIED } from "@/lib/seo";
 
@@ -21,5 +25,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...serviceEntries];
+  const cleaningHubEntry: MetadataRoute.Sitemap[number] = {
+    url: `${SITE_URL}${CLEANING_HUB.href}`,
+    lastModified: SITEMAP_LAST_MODIFIED,
+    changeFrequency: "monthly",
+    priority: 0.9,
+  };
+
+  const cleaningServiceEntries: MetadataRoute.Sitemap = CLEANING_SERVICE_SLUGS.map(
+    (slug) => ({
+      url: `${SITE_URL}/services/cleaning/${slug}`,
+      lastModified: SITEMAP_LAST_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }),
+  );
+
+  return [
+    ...staticEntries,
+    ...serviceEntries,
+    cleaningHubEntry,
+    ...cleaningServiceEntries,
+  ];
 }

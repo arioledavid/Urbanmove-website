@@ -1,4 +1,14 @@
 import type { Metadata } from "next";
+import type {
+  CleaningServiceData,
+  CleaningServiceSlug,
+} from "@/lib/cleaning-services-data";
+import {
+  CLEANING_HUB,
+  CLEANING_SERVICE_SLUGS,
+  CLEANING_SERVICES,
+  getCleaningHeroDescription,
+} from "@/lib/cleaning-services-data";
 import type { ServiceData, ServiceSlug } from "@/lib/services-data";
 import { getServiceHeroDescription } from "@/lib/services-data";
 
@@ -109,6 +119,18 @@ export const DEFAULT_KEYWORDS = [
   "furniture delivery Aberdeen",
   "student moves Aberdeen",
   "cargo logistics UK",
+  "cleaning services Aberdeen",
+  "house cleaning Aberdeen",
+  "commercial cleaning Aberdeen",
+  "end of tenancy cleaning Aberdeen",
+  "move out cleaning Aberdeen",
+  "deposit back cleaning Aberdeen",
+  "deep cleaning Aberdeen",
+  "spring clean Aberdeen",
+  "residential cleaning Aberdeen",
+  "domestic cleaning Aberdeen",
+  "office cleaning Aberdeen",
+  "workplace cleaning Aberdeen",
   "UrbanMove Removals Man and Van Cleaning Services Ltd",
 ];
 
@@ -235,5 +257,84 @@ export function getBreadcrumbJsonLd(items: BreadcrumbItem[]) {
       name: item.name,
       item: `${SITE_URL}${item.path === "/" ? "" : item.path}`,
     })),
+  };
+}
+
+export function buildCleaningHubMetadata(): Metadata {
+  return buildSocialMetadata({
+    title: CLEANING_HUB.metaTitle,
+    description: CLEANING_HUB.metaDescription,
+    canonical: CLEANING_HUB.href,
+    absoluteTitle: true,
+    image: CLEANING_HUB.image,
+    imageAlt: CLEANING_HUB.imageAlt,
+  });
+}
+
+export function buildCleaningServiceMetadata(
+  slug: CleaningServiceSlug,
+  service: CleaningServiceData,
+): Metadata {
+  return buildSocialMetadata({
+    title: service.title,
+    description: service.metaDescription ?? getCleaningHeroDescription(service),
+    canonical: `/services/cleaning/${slug}`,
+    image: service.image,
+    imageAlt: service.imageAlt,
+  });
+}
+
+export function getCleaningHubJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: CLEANING_HUB.title,
+    description: CLEANING_HUB.metaDescription,
+    url: `${SITE_URL}${CLEANING_HUB.href}`,
+    image: `${SITE_URL}${CLEANING_HUB.image}`,
+    provider: {
+      "@type": "MovingCompany",
+      name: BUSINESS.name,
+      url: BUSINESS.url,
+    },
+    areaServed: [...AREA_SERVED],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: CLEANING_HUB.title,
+      itemListElement: CLEANING_SERVICE_SLUGS.map((slug, index) => {
+        const service = CLEANING_SERVICES[slug];
+        return {
+          "@type": "Offer",
+          position: index + 1,
+          itemOffered: {
+            "@type": "Service",
+            name: service.title,
+            description: service.metaDescription ?? getCleaningHeroDescription(service),
+            url: `${SITE_URL}/services/cleaning/${slug}`,
+          },
+        };
+      }),
+    },
+  };
+}
+
+export function getCleaningServiceJsonLd(
+  slug: CleaningServiceSlug,
+  service: CleaningServiceData,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: service.title,
+    description: service.metaDescription ?? getCleaningHeroDescription(service),
+    serviceType: service.serviceType,
+    url: `${SITE_URL}/services/cleaning/${slug}`,
+    image: `${SITE_URL}${service.image}`,
+    provider: {
+      "@type": "MovingCompany",
+      name: BUSINESS.name,
+      url: BUSINESS.url,
+    },
+    areaServed: [...AREA_SERVED],
   };
 }

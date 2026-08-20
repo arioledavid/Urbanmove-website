@@ -21,11 +21,13 @@ import {
   type ServiceData,
   type ServiceSlug,
 } from "@/lib/services-data";
+import type { CleaningServiceData } from "@/lib/cleaning-services-data";
 import { cn } from "@/lib/utils";
 
 type ServiceTemplateProps = {
-  slug: ServiceSlug;
-  service: ServiceData;
+  service: ServiceData | CleaningServiceData;
+  slug?: ServiceSlug;
+  bookingHref?: string;
 };
 
 function FeatureIcon({ className }: { className?: string }) {
@@ -52,7 +54,7 @@ function ProcessStep({
   index,
   total,
 }: {
-  step: ServiceData["steps"][number];
+  step: { title: string; description: string };
   index: number;
   total: number;
 }) {
@@ -136,9 +138,14 @@ function FeatureCard({
   );
 }
 
-export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
+export function ServiceTemplate({
+  service,
+  slug,
+  bookingHref,
+}: ServiceTemplateProps) {
   const reduceMotion = useReducedMotion();
-  const bookingHref = getServiceBookingHref(slug);
+  const resolvedBookingHref =
+    bookingHref ?? (slug ? getServiceBookingHref(slug) : "/contact#quote");
 
   return (
     <main className="flex flex-1 flex-col bg-paper font-sans">
@@ -367,7 +374,7 @@ export function ServiceTemplate({ slug, service }: ServiceTemplateProps) {
 
                 <PageRevealItem>
                   <div className="mt-10">
-                    <MagneticButton href={bookingHref}>
+                    <MagneticButton href={resolvedBookingHref}>
                       {"ctaButtonLabel" in service
                         ? service.ctaButtonLabel
                         : "Initialize Booking Request"}

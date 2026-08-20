@@ -1,4 +1,4 @@
-export const QUOTE_SERVICES = ["cargo", "removal", "courier"] as const;
+export const QUOTE_SERVICES = ["cargo", "removal", "courier", "cleaning"] as const;
 
 export type QuoteServiceId = (typeof QUOTE_SERVICES)[number];
 
@@ -34,6 +34,11 @@ export type QuoteRequestPayload = {
   deliveryPostcode: string;
   parcelDescription: string;
   courierDateTime: string;
+  cleaningType: string;
+  cleaningPostcode: string;
+  cleaningPropertyType: string;
+  cleaningDate: string;
+  cleaningNotes: string;
   gdprConsent: boolean;
 };
 
@@ -41,6 +46,7 @@ export const QUOTE_SERVICE_LABELS: Record<QuoteServiceId, string> = {
   cargo: "Cargo Services",
   removal: "Removal Services",
   courier: "Courier Service",
+  cleaning: "Cleaning Services",
 };
 
 function isQuoteService(value: unknown): value is QuoteServiceId {
@@ -88,6 +94,10 @@ export function validateQuoteRequest(
 
   const readBoolean = (key: string) => input[key] === true;
 
+  if (input.service === "cleaning" && !readString("cleaningType")) {
+    return { ok: false, error: "Please select a cleaning type." };
+  }
+
   return {
     ok: true,
     data: {
@@ -124,6 +134,11 @@ export function validateQuoteRequest(
       deliveryPostcode: readString("deliveryPostcode"),
       parcelDescription: readString("parcelDescription"),
       courierDateTime: readString("courierDateTime"),
+      cleaningType: readString("cleaningType"),
+      cleaningPostcode: readString("cleaningPostcode"),
+      cleaningPropertyType: readString("cleaningPropertyType"),
+      cleaningDate: readString("cleaningDate"),
+      cleaningNotes: readString("cleaningNotes"),
       gdprConsent: true,
     },
   };
